@@ -1,5 +1,6 @@
+
 import React, { useEffect, useState, useMemo } from 'react';
-import { ArrowLeft, Trash2, Search, FileText, CheckCircle, Clock, Download, Filter, Calendar, ShieldAlert, MapPin, CreditCard, Sparkles, Car } from 'lucide-react';
+import { ArrowLeft, Trash2, Search, FileText, CheckCircle, Clock, Download, Filter, Calendar, ShieldAlert, MapPin, CreditCard, Sparkles, Car, Loader2 } from 'lucide-react';
 import { SecurityLog } from '../types';
 import { getLogs, clearLogs } from '../services/storage';
 
@@ -27,17 +28,24 @@ const formatLogContent = (text: string) => {
 
 const VisitorLogs: React.FC<VisitorLogsProps> = ({ onBack }) => {
   const [logs, setLogs] = useState<SecurityLog[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'GRANTED' | 'DENIED' | 'EXPIRED'>('ALL');
   const [dateFilter, setDateFilter] = useState<'ALL' | 'TODAY'>('ALL');
 
   useEffect(() => {
-    setLogs(getLogs());
+    const fetchLogs = async () => {
+      setLoading(true);
+      const data = await getLogs();
+      setLogs(data);
+      setLoading(false);
+    };
+    fetchLogs();
   }, []);
 
-  const handleClear = () => {
+  const handleClear = async () => {
     if (window.confirm('Are you sure you want to clear all visitor history? This action cannot be undone.')) {
-      clearLogs();
+      await clearLogs();
       setLogs([]);
     }
   };
@@ -206,7 +214,12 @@ const VisitorLogs: React.FC<VisitorLogsProps> = ({ onBack }) => {
       {/* Scrollable List */}
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-8">
         <div className="max-w-5xl mx-auto">
-          {Object.keys(groupedLogs).length === 0 ? (
+          {loading ? (
+             <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+               <Loader2 className="animate-spin mb-4" size={48} />
+               <p>Loading records from database...</p>
+             </div>
+          ) : Object.keys(groupedLogs).length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 opacity-50">
               <Search size={64} className="mb-4 text-slate-600" />
               <p className="text-xl font-medium text-slate-400">No logs found matching criteria</p>

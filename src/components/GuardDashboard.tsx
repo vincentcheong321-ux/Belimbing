@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Scan, ShieldCheck, ShieldAlert, Clock, ArrowLeft, Loader2, CheckSquare, FileText, Sparkles } from 'lucide-react';
+import { Scan, ShieldCheck, ShieldAlert, Clock, ArrowLeft, Loader2, CheckSquare, FileText, Sparkles, Car } from 'lucide-react';
 import QRScanner from './QRScanner';
 import VisitorLogs from './VisitorLogs';
 import { VisitorData, SecurityLog } from '../types';
@@ -36,12 +37,15 @@ const GuardDashboard: React.FC<GuardDashboardProps> = ({ onBack }) => {
 
   // Update stats whenever we are on the Home view
   useEffect(() => {
-    if (view === 'HOME') {
-      const logs = getLogs();
-      const today = new Date().setHours(0,0,0,0);
-      const count = logs.filter(l => new Date(l.checkInTime).setHours(0,0,0,0) === today).length;
-      setTodayCount(count);
-    }
+    const fetchCount = async () => {
+      if (view === 'HOME') {
+        const logs = await getLogs();
+        const today = new Date().setHours(0,0,0,0);
+        const count = logs.filter(l => new Date(l.checkInTime).setHours(0,0,0,0) === today).length;
+        setTodayCount(count);
+      }
+    };
+    fetchCount();
   }, [view]);
 
   const handleScan = (data: string) => {
@@ -71,7 +75,7 @@ const GuardDashboard: React.FC<GuardDashboardProps> = ({ onBack }) => {
     const logText = await logVisitorEntry(scannedData, status);
     setAiLog(logText);
     
-    // 2. Save to Storage
+    // 2. Save to Storage (Supabase)
     const newLogEntry: SecurityLog = {
       id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
       visitorName: scannedData.fullName,
@@ -84,7 +88,7 @@ const GuardDashboard: React.FC<GuardDashboardProps> = ({ onBack }) => {
       aiAnalysis: logText
     };
     
-    saveLog(newLogEntry);
+    await saveLog(newLogEntry);
     setIsLogging(false);
     
     // Update count immediately after saving
