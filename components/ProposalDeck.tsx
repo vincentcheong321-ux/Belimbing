@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, X, Shield, Smartphone, Zap, Brain, Lock, Layout, CheckCircle, User, CreditCard, MapPin, Scan, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Shield, Smartphone, Zap, Brain, Lock, Layout, CheckCircle, User, CreditCard, Scan, Loader2 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
 interface ProposalDeckProps {
@@ -57,10 +57,10 @@ const DemoScreen2QR = () => (
 );
 
 const DemoScreen3Scan = () => (
-  <div className="h-full bg-slate-900 relative flex flex-col items-center justify-center">
+  <div className="h-full bg-slate-900 relative flex flex-col items-center justify-center overflow-hidden">
     <div className="absolute inset-0 opacity-30 bg-[url('https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center"></div>
-    <div className="w-48 h-48 border-2 border-emerald-400 rounded-lg relative z-10 flex items-center justify-center">
-       <div className="w-44 h-0.5 bg-emerald-400 animate-[ping_1.5s_ease-in-out_infinite] opacity-75"></div>
+    <div className="w-48 h-48 border-2 border-emerald-400 rounded-lg relative z-10 overflow-hidden bg-black/20 backdrop-blur-sm">
+       <div className="w-full h-0.5 bg-emerald-400 absolute top-0 animate-scan shadow-[0_0_15px_rgba(52,211,153,1)]"></div>
     </div>
     <div className="absolute bottom-12 bg-black/50 backdrop-blur-md px-4 py-2 rounded-full text-white text-xs">
        Align QR Code
@@ -105,23 +105,27 @@ const DemoSimulation = () => {
   }, []);
 
   return (
-     <div className="relative mx-auto border-slate-800 bg-slate-800 border-[12px] rounded-[2.5rem] h-[500px] w-[260px] shadow-2xl">
-        <div className="w-[100px] h-[18px] bg-slate-800 top-0 rounded-b-[1rem] left-1/2 -translate-x-1/2 absolute z-20"></div>
-        <div className="rounded-[2rem] overflow-hidden w-full h-full bg-white relative">
+     /* Outer phone shell with overflow-hidden to clip content */
+     <div className="relative mx-auto bg-slate-800 border-[12px] border-slate-800 rounded-[2.5rem] h-[500px] w-[260px] shadow-2xl overflow-hidden transform-gpu">
+        {/* Notch */}
+        <div className="w-[100px] h-[18px] bg-slate-800 top-0 rounded-b-[1rem] left-1/2 -translate-x-1/2 absolute z-20 pointer-events-none"></div>
+        
+        {/* Inner Screen Container - Adjusted radius to 1.7rem for perfect fit without bleed */}
+        <div className="w-full h-full bg-white relative rounded-[1.7rem] overflow-hidden z-0">
             {step === 0 && <DemoScreen1Visitor />}
             {step === 1 && <DemoScreen2QR />}
             {step === 2 && <DemoScreen3Scan />}
             {step === 3 && <DemoScreen4Success />}
             
             {/* Step Indicators */}
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-30">
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-30 pointer-events-none">
                {[0,1,2,3].map(i => (
                   <div key={i} className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === step ? 'bg-emerald-500 w-3' : 'bg-slate-300'}`} />
                ))}
             </div>
             
             {/* Context Label */}
-            <div className="absolute top-2 left-0 right-0 text-[10px] text-center font-bold text-slate-400 z-10 pt-2">
+            <div className="absolute top-2 left-0 right-0 text-[10px] text-center font-bold text-slate-400 z-10 pt-2 pointer-events-none">
                {step === 0 && "VISITOR APP"}
                {step === 1 && "VISITOR APP"}
                {step === 2 && "GUARD APP"}
