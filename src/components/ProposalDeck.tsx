@@ -111,8 +111,8 @@ const DemoSimulation = () => {
         {/* Notch */}
         <div className="w-[100px] h-[18px] bg-slate-800 top-0 rounded-b-[1rem] left-1/2 -translate-x-1/2 absolute z-20 pointer-events-none"></div>
         
-        {/* Inner Screen Container - Fills the shell perfectly */}
-        <div className="w-full h-full bg-white relative rounded-[1.8rem] overflow-hidden z-0">
+        {/* Inner Screen Container - Adjusted radius to 1.7rem for perfect fit without bleed */}
+        <div className="w-full h-full bg-white relative rounded-[1.7rem] overflow-hidden z-0">
             {step === 0 && <DemoScreen1Visitor />}
             {step === 1 && <DemoScreen2QR />}
             {step === 2 && <DemoScreen3Scan />}
