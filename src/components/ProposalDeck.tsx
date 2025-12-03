@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, X, Shield, Smartphone, Zap, Brain, Lock, Layout, CheckCircle, User, CreditCard } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Shield, Smartphone, Zap, Brain, Lock, Layout, CheckCircle, User, CreditCard, Scan, Loader2 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
 interface ProposalDeckProps {
@@ -106,24 +106,27 @@ const DemoSimulation = () => {
   }, []);
 
   return (
-     <div className="relative mx-auto border-slate-800 bg-slate-800 border-[12px] rounded-[2.5rem] h-[500px] w-[260px] shadow-2xl box-border">
-        <div className="w-[100px] h-[18px] bg-slate-800 top-0 rounded-b-[1rem] left-1/2 -translate-x-1/2 absolute z-20"></div>
-        {/* Adjusted inner border radius to 1.8rem (approx 29px) for better concentricity with 2.5rem outer + 12px border */}
-        <div className="rounded-[1.8rem] overflow-hidden w-full h-full bg-white relative">
+     /* Outer phone shell with overflow-hidden to clip content */
+     <div className="relative mx-auto bg-slate-800 border-[12px] border-slate-800 rounded-[2.5rem] h-[500px] w-[260px] shadow-2xl overflow-hidden transform-gpu">
+        {/* Notch */}
+        <div className="w-[100px] h-[18px] bg-slate-800 top-0 rounded-b-[1rem] left-1/2 -translate-x-1/2 absolute z-20 pointer-events-none"></div>
+        
+        {/* Inner Screen Container - Fills the shell perfectly */}
+        <div className="w-full h-full bg-white relative rounded-[1.8rem] overflow-hidden z-0">
             {step === 0 && <DemoScreen1Visitor />}
             {step === 1 && <DemoScreen2QR />}
             {step === 2 && <DemoScreen3Scan />}
             {step === 3 && <DemoScreen4Success />}
             
             {/* Step Indicators */}
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-30">
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-30 pointer-events-none">
                {[0,1,2,3].map(i => (
                   <div key={i} className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === step ? 'bg-emerald-500 w-3' : 'bg-slate-300'}`} />
                ))}
             </div>
             
             {/* Context Label */}
-            <div className="absolute top-2 left-0 right-0 text-[10px] text-center font-bold text-slate-400 z-10 pt-2">
+            <div className="absolute top-2 left-0 right-0 text-[10px] text-center font-bold text-slate-400 z-10 pt-2 pointer-events-none">
                {step === 0 && "VISITOR APP"}
                {step === 1 && "VISITOR APP"}
                {step === 2 && "GUARD APP"}
