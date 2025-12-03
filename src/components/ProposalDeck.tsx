@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, X, Shield, Smartphone, Zap, Brain, Lock, Layout, CheckCircle, User, CreditCard } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
@@ -57,10 +58,10 @@ const DemoScreen2QR = () => (
 );
 
 const DemoScreen3Scan = () => (
-  <div className="h-full bg-slate-900 relative flex flex-col items-center justify-center">
+  <div className="h-full bg-slate-900 relative flex flex-col items-center justify-center overflow-hidden">
     <div className="absolute inset-0 opacity-30 bg-[url('https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center"></div>
-    <div className="w-48 h-48 border-2 border-emerald-400 rounded-lg relative z-10 flex items-center justify-center">
-       <div className="w-44 h-0.5 bg-emerald-400 animate-[ping_1.5s_ease-in-out_infinite] opacity-75"></div>
+    <div className="w-48 h-48 border-2 border-emerald-400 rounded-lg relative z-10 overflow-hidden bg-black/20 backdrop-blur-sm">
+       <div className="w-full h-0.5 bg-emerald-400 absolute top-0 animate-scan shadow-[0_0_15px_rgba(52,211,153,1)]"></div>
     </div>
     <div className="absolute bottom-12 bg-black/50 backdrop-blur-md px-4 py-2 rounded-full text-white text-xs">
        Align QR Code
@@ -105,9 +106,10 @@ const DemoSimulation = () => {
   }, []);
 
   return (
-     <div className="relative mx-auto border-slate-800 bg-slate-800 border-[12px] rounded-[2.5rem] h-[500px] w-[260px] shadow-2xl">
+     <div className="relative mx-auto border-slate-800 bg-slate-800 border-[12px] rounded-[2.5rem] h-[500px] w-[260px] shadow-2xl box-border">
         <div className="w-[100px] h-[18px] bg-slate-800 top-0 rounded-b-[1rem] left-1/2 -translate-x-1/2 absolute z-20"></div>
-        <div className="rounded-[2rem] overflow-hidden w-full h-full bg-white relative">
+        {/* Adjusted inner border radius to 1.8rem (approx 29px) for better concentricity with 2.5rem outer + 12px border */}
+        <div className="rounded-[1.8rem] overflow-hidden w-full h-full bg-white relative">
             {step === 0 && <DemoScreen1Visitor />}
             {step === 1 && <DemoScreen2QR />}
             {step === 2 && <DemoScreen3Scan />}

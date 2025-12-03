@@ -26,20 +26,20 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
     if (name === 'icNumber') {
       // Restrict to digits only
       const numericValue = value.replace(/\D/g, '');
-      setFormData(prev => ({ ...prev, [name]: numericValue }));
+      setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: numericValue }));
     } else if (name === 'phoneNumber') {
       // Restrict to digits only
       const numericValue = value.replace(/\D/g, '');
-      setFormData(prev => ({ ...prev, [name]: numericValue }));
+      setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: numericValue }));
     } else if (name === 'carPlate') {
       // Auto-uppercase
-      setFormData(prev => ({ ...prev, [name]: value.toUpperCase() }));
+      setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: value.toUpperCase() }));
     } else if (name === 'blockNumber') {
       // Alphabets only
       const alphaValue = value.replace(/[^a-zA-Z]/g, '').toUpperCase();
-      setFormData(prev => ({ ...prev, [name]: alphaValue }));
+      setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: alphaValue }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: value }));
     }
   };
 
