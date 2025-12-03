@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, X, Shield, Smartphone, Zap, Brain, Lock, Layout, CheckCircle, User, CreditCard, Scan, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Shield, Smartphone, Zap, Database, Lock, Layout, CheckCircle, User, CreditCard } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
 interface ProposalDeckProps {
@@ -84,13 +83,10 @@ const DemoScreen4Success = () => (
        </div>
     </div>
     
-    <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-       <div className="text-xs font-bold text-slate-400 uppercase mb-2">AI Log Generated</div>
-       <div className="space-y-2">
-          <div className="h-2 w-full bg-slate-100 rounded"></div>
-          <div className="h-2 w-3/4 bg-slate-100 rounded"></div>
-          <div className="h-2 w-5/6 bg-slate-100 rounded"></div>
-       </div>
+    <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm text-center py-8">
+       <CheckCircle className="text-emerald-500 mx-auto mb-2" size={32} />
+       <h3 className="text-sm font-bold text-slate-700">Database Updated</h3>
+       <p className="text-xs text-slate-400 mt-1">Visitor verified</p>
     </div>
   </div>
 );
@@ -233,10 +229,10 @@ const slides = [
            </div>
            <div className="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/10 text-center">
              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-300">
-               <Brain size={32} />
+               <Database size={32} />
              </div>
-             <h3 className="text-xl font-bold text-white mb-2">AI Logging</h3>
-             <p className="text-emerald-100/60">Google Gemini AI generates professional audit logs automatically.</p>
+             <h3 className="text-xl font-bold text-white mb-2">Secure Logging</h3>
+             <p className="text-emerald-100/60">Automatically logs entry data to a secure, audit-ready database.</p>
            </div>
         </div>
       </div>
@@ -278,7 +274,7 @@ const slides = [
                 <div className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-300 flex items-center justify-center font-bold shrink-0">3</div>
                 <div>
                    <h3 className="text-white font-bold text-lg">Guard Scans</h3>
-                   <p className="text-indigo-200/60">Instant validation and AI-powered audit logging.</p>
+                   <p className="text-indigo-200/60">Instant validation and secure audit logging.</p>
                 </div>
              </div>
           </div>

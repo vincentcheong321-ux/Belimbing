@@ -62,7 +62,7 @@ export default function App() {
                   Belim<span className="text-emerald-400">bing</span>
                 </h1>
                 <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto">
-                  Secure, efficient, and AI-powered visitor management system for modern residences.
+                  Secure, efficient, and digital visitor management system for modern residences.
                 </p>
               </div>
 

@@ -1,30 +1,11 @@
-
 import React, { useEffect, useState, useMemo } from 'react';
-import { ArrowLeft, Trash2, Search, FileText, CheckCircle, Clock, Download, Filter, Calendar, ShieldAlert, MapPin, CreditCard, Sparkles, Car, Loader2 } from 'lucide-react';
+import { ArrowLeft, Trash2, Search, FileText, CheckCircle, Clock, Download, Filter, Calendar, ShieldAlert, MapPin, CreditCard, Car, Loader2 } from 'lucide-react';
 import { SecurityLog } from '../types';
 import { getLogs, clearLogs } from '../services/storage';
 
 interface VisitorLogsProps {
   onBack: () => void;
 }
-
-const formatLogContent = (text: string) => {
-  if (!text) return null;
-  // Remove wrapping quotes if present
-  const cleanText = text.replace(/^"|"$/g, ''); 
-  
-  // Split by bold markdown markers **text**
-  const parts = cleanText.split(/(\*\*.*?\*\*)/g);
-  
-  return parts.map((part, index) => {
-    if (part.startsWith('**') && part.endsWith('**')) {
-      // Clean the ** markers and render bold
-      const content = part.slice(2, -2);
-      return <span key={index} className="font-semibold text-emerald-400">{content}</span>;
-    }
-    return <span key={index} className="text-slate-300">{part}</span>;
-  });
-};
 
 const VisitorLogs: React.FC<VisitorLogsProps> = ({ onBack }) => {
   const [logs, setLogs] = useState<SecurityLog[]>([]);
@@ -53,7 +34,8 @@ const VisitorLogs: React.FC<VisitorLogsProps> = ({ onBack }) => {
   const handleExportCSV = () => {
     if (logs.length === 0) return;
 
-    const headers = ['ID', 'Visitor Name', 'IC Number', 'Car Plate', 'Destination', 'Check-In Time', 'Status', 'AI Note'];
+    // Removed AI Note from headers
+    const headers = ['ID', 'Visitor Name', 'IC Number', 'Car Plate', 'Destination', 'Check-In Time', 'Status'];
     const rows = logs.map(log => [
       log.id,
       `"${log.visitorName}"`, 
@@ -61,8 +43,7 @@ const VisitorLogs: React.FC<VisitorLogsProps> = ({ onBack }) => {
       `"${log.carPlate || 'N/A'}"`,
       `"${log.destination}"`,
       new Date(log.checkInTime).toLocaleString(),
-      log.status,
-      `"${log.aiAnalysis.replace(/"/g, '""')}"`
+      log.status
     ]);
 
     const csvContent = [
@@ -266,51 +247,32 @@ const VisitorLogs: React.FC<VisitorLogsProps> = ({ onBack }) => {
                             </span>
                          </div>
 
-                         {/* Card Body */}
-                         <div className="p-4 grid lg:grid-cols-5 gap-6">
-                            {/* Left: Structured Data */}
-                            <div className="lg:col-span-2 space-y-4">
-                               <div>
-                                  <div className="text-xs text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1">
-                                    <CreditCard size={12} /> IC / Passport
-                                  </div>
-                                  <div className="font-mono text-slate-200 text-sm bg-slate-900/50 p-2 rounded border border-slate-700/50">
-                                    {log.icNumber}
-                                  </div>
-                               </div>
-                               <div>
-                                  <div className="text-xs text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1">
-                                    <Car size={12} /> Car Plate
-                                  </div>
-                                  <div className="font-mono text-slate-200 text-sm bg-slate-900/50 p-2 rounded border border-slate-700/50">
-                                    {log.carPlate || 'N/A'}
-                                  </div>
-                               </div>
-                               <div>
-                                  <div className="text-xs text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1">
-                                    <MapPin size={12} /> Destination
-                                  </div>
-                                  <div className="text-slate-200 text-sm font-medium bg-slate-900/50 p-2 rounded border border-slate-700/50">
-                                    {log.destination}
-                                  </div>
-                               </div>
-                            </div>
-
-                            {/* Right: AI Log */}
-                            <div className="lg:col-span-3">
-                               <div className="h-full bg-slate-950 rounded-lg border border-slate-800 p-4 relative group">
-                                  <div className="absolute top-0 right-0 p-2 opacity-50">
-                                    <Sparkles size={16} className="text-indigo-500" />
-                                  </div>
-                                  <div className="text-xs font-bold text-indigo-400 mb-2 uppercase tracking-wide flex items-center gap-1.5">
-                                     <div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
-                                     System Audit Trail
-                                  </div>
-                                  <div className="text-sm text-slate-400 leading-relaxed font-light">
-                                    {formatLogContent(log.aiAnalysis)}
-                                  </div>
-                               </div>
-                            </div>
+                         {/* Card Body - Updated layout without AI column */}
+                         <div className="p-4 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                             <div>
+                                <div className="text-xs text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                  <CreditCard size={12} /> IC / Passport
+                                </div>
+                                <div className="font-mono text-slate-200 text-sm bg-slate-900/50 p-2 rounded border border-slate-700/50">
+                                  {log.icNumber}
+                                </div>
+                             </div>
+                             <div>
+                                <div className="text-xs text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                  <Car size={12} /> Car Plate
+                                </div>
+                                <div className="font-mono text-slate-200 text-sm bg-slate-900/50 p-2 rounded border border-slate-700/50">
+                                  {log.carPlate || 'N/A'}
+                                </div>
+                             </div>
+                             <div>
+                                <div className="text-xs text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                  <MapPin size={12} /> Destination
+                                </div>
+                                <div className="text-slate-200 text-sm font-medium bg-slate-900/50 p-2 rounded border border-slate-700/50">
+                                  {log.destination}
+                                </div>
+                             </div>
                          </div>
                       </div>
                     );
