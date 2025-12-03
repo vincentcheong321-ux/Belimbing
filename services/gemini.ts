@@ -1,8 +1,6 @@
+
 import { GoogleGenAI } from "@google/genai";
 import { VisitorData } from "../types";
-
-// Polyfill for TypeScript build without @types/node
-declare const process: { env: { API_KEY: string } };
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 

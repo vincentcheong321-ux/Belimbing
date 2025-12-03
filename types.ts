@@ -1,3 +1,4 @@
+
 export interface VisitorData {
   fullName: string;
   phoneNumber: string;

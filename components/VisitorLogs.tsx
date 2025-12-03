@@ -1,5 +1,6 @@
+
 import React, { useEffect, useState, useMemo } from 'react';
-import { ArrowLeft, Trash2, Search, FileText, CheckCircle, Clock, Download, Filter, Calendar, ShieldAlert, MapPin, CreditCard, Sparkles, Car } from 'lucide-react';
+import { ArrowLeft, Trash2, Search, FileText, CheckCircle, XCircle, Clock, Download, Filter, Calendar, ShieldAlert, MapPin, CreditCard, Sparkles, Car } from 'lucide-react';
 import { SecurityLog } from '../types';
 import { getLogs, clearLogs } from '../services/storage';
 

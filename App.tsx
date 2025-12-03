@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Shield, UserPlus, Presentation } from 'lucide-react';
 import VisitorForm from './components/VisitorForm';
 import GuardDashboard from './components/GuardDashboard';

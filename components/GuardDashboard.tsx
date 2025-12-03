@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Scan, ShieldCheck, ShieldAlert, Clock, ArrowLeft, Loader2, CheckSquare, FileText, Sparkles } from 'lucide-react';
+import { Scan, ShieldCheck, ShieldAlert, Clock, ArrowLeft, Loader2, CheckSquare, FileText, Sparkles, Car } from 'lucide-react';
 import QRScanner from './QRScanner';
 import VisitorLogs from './VisitorLogs';
 import { VisitorData, SecurityLog } from '../types';

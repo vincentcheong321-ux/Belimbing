@@ -60,8 +60,8 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
 
   if (generatedQR) {
     return (
-      <div className="min-h-screen bg-slate-900 p-6 flex flex-col items-center justify-center animate-fade-in">
-        <div className="w-full max-w-md bg-slate-800 rounded-2xl shadow-xl overflow-hidden border border-slate-700">
+      <div className="min-h-screen bg-slate-50 p-6 flex flex-col items-center justify-center animate-fade-in">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
           <div className="bg-emerald-600 p-6 text-white text-center">
             <CheckCircle className="w-12 h-12 mx-auto mb-2" />
             <h2 className="text-2xl font-bold">Access Pass Generated</h2>
@@ -69,25 +69,25 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
           </div>
           
           <div className="p-8 flex flex-col items-center">
-            <div className="bg-white p-4 rounded-xl border-2 border-slate-600 shadow-inner">
+            <div className="bg-white p-4 rounded-xl border-2 border-slate-100 shadow-inner">
               <QRCodeSVG value={generatedQR} size={220} level="H" includeMargin={true} />
             </div>
             
-            <p className="mt-6 text-slate-400 text-center text-sm px-4">
+            <p className="mt-6 text-slate-500 text-center text-sm px-4">
               Please present this QR code to the security guard at the main entrance.
             </p>
 
             <div className="mt-8 w-full space-y-3">
                <button 
                 onClick={() => window.print()}
-                className="w-full flex items-center justify-center gap-2 bg-slate-100 text-slate-900 py-3 rounded-xl font-semibold hover:bg-white transition-colors"
+                className="w-full flex items-center justify-center gap-2 bg-slate-900 text-white py-3 rounded-xl font-semibold hover:bg-slate-800 transition-colors"
               >
                 <Download size={18} />
                 Save / Print
               </button>
               <button 
                 onClick={() => setGeneratedQR(null)}
-                className="w-full py-3 text-slate-400 hover:text-white font-medium"
+                className="w-full py-3 text-slate-600 hover:text-slate-900 font-medium"
               >
                 Generate New Pass
               </button>
@@ -99,28 +99,28 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md mx-auto">
         <button 
           onClick={onBack} 
-          className="flex items-center text-slate-400 hover:text-white mb-6 transition-colors"
+          className="flex items-center text-slate-500 hover:text-slate-900 mb-6 transition-colors"
         >
           <ArrowLeft className="mr-2" size={20} />
           Back to Home
         </button>
 
-        <div className="bg-slate-800 rounded-2xl shadow-lg p-8 border border-slate-700">
+        <div className="bg-white rounded-2xl shadow-lg p-8 border border-slate-100">
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-white">Visitor Registration</h1>
-            <p className="text-slate-400 mt-2">Please fill in your details to generate an entry pass.</p>
+            <h1 className="text-2xl font-bold text-slate-900">Visitor Registration</h1>
+            <p className="text-slate-500 mt-2">Please fill in your details to generate an entry pass.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Full Name (as per IC)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Full Name (as per IC)</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="text-slate-500" size={18} />
+                  <User className="text-slate-400" size={18} />
                 </div>
                 <input
                   required
@@ -128,17 +128,17 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
                   type="text"
                   value={formData.fullName}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all"
+                  className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
                   placeholder="Ali Bin Abu"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">IC Number (Digits Only)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">IC Number (Digits Only)</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <CreditCard className="text-slate-500" size={18} />
+                  <CreditCard className="text-slate-400" size={18} />
                 </div>
                 <input
                   required
@@ -147,34 +147,34 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
                   inputMode="numeric"
                   value={formData.icNumber}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all"
+                  className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
                   placeholder="e.g. 901020105555"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Car Plate Number</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Car Plate Number</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Car className="text-slate-500" size={18} />
+                  <Car className="text-slate-400" size={18} />
                 </div>
                 <input
                   name="carPlate"
                   type="text"
                   value={formData.carPlate}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all"
+                  className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
                   placeholder="ABC 1234"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Phone Number</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Phone className="text-slate-500" size={18} />
+                  <Phone className="text-slate-400" size={18} />
                 </div>
                 <input
                   required
@@ -183,7 +183,7 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
                   inputMode="numeric"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all"
+                  className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
                   placeholder="0123456789"
                 />
               </div>
@@ -191,10 +191,10 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
 
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Block</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Block</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Building className="text-slate-500" size={18} />
+                    <Building className="text-slate-400" size={18} />
                   </div>
                   <input
                     required
@@ -202,16 +202,16 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
                     type="text"
                     value={formData.blockNumber}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all"
+                    className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
                     placeholder="A"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Lot No.</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Lot No.</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <MapPin className="text-slate-500" size={18} />
+                    <MapPin className="text-slate-400" size={18} />
                   </div>
                   <input
                     required
@@ -219,16 +219,16 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
                     type="text"
                     value={formData.lotNumber}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all"
+                    className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
                     placeholder="10"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Unit No.</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Unit No.</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Home className="text-slate-500" size={18} />
+                    <Home className="text-slate-400" size={18} />
                   </div>
                   <input
                     required
@@ -236,7 +236,7 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
                     type="text"
                     value={formData.unitNumber}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all"
+                    className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
                     placeholder="05"
                   />
                 </div>

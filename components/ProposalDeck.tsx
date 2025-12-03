@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, X, Shield, Smartphone, Zap, Brain, Lock, Layout, CheckCircle, User, CreditCard } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Shield, Smartphone, Zap, Brain, Lock, Layout, CheckCircle, User, CreditCard, MapPin, Scan, Loader2 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
 interface ProposalDeckProps {
