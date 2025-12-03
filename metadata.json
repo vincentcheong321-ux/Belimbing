@@ -1,0 +1,7 @@
+{
+  "name": "Belimbing - Visitor Management",
+  "description": "Secure visitor check-in system with QR code generation and AI-powered guard logging.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
