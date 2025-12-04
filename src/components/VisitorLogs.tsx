@@ -34,8 +34,8 @@ const VisitorLogs: React.FC<VisitorLogsProps> = ({ onBack }) => {
   const handleExportCSV = () => {
     if (logs.length === 0) return;
 
-    // Removed AI Note from headers
-    const headers = ['ID', 'Visitor Name', 'IC Number', 'Car Plate', 'Destination', 'Check-In Time', 'Status'];
+    // Updated 'Car Plate' to 'Vehicle No.' in headers
+    const headers = ['ID', 'Visitor Name', 'IC Number', 'Vehicle No.', 'Destination', 'Check-In Time', 'Status'];
     const rows = logs.map(log => [
       log.id,
       `"${log.visitorName}"`, 
@@ -150,7 +150,7 @@ const VisitorLogs: React.FC<VisitorLogsProps> = ({ onBack }) => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" size={16} />
                 <input 
                   type="text" 
-                  placeholder="Search name, IC, plate, unit..."
+                  placeholder="Search name, IC, vehicle no, unit..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full bg-slate-900/50 border border-slate-600 rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-emerald-500 outline-none text-slate-200 placeholder-slate-500"
@@ -259,7 +259,7 @@ const VisitorLogs: React.FC<VisitorLogsProps> = ({ onBack }) => {
                              </div>
                              <div>
                                 <div className="text-xs text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1">
-                                  <Car size={12} /> Car Plate
+                                  <Car size={12} /> Vehicle No.
                                 </div>
                                 <div className="font-mono text-slate-200 text-sm bg-slate-900/50 p-2 rounded border border-slate-700/50">
                                   {log.carPlate || 'N/A'}

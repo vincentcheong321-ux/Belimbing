@@ -1,10 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { Scan, ShieldCheck, ShieldAlert, Clock, ArrowLeft, Loader2, CheckSquare, FileText, Sparkles, Car } from 'lucide-react';
+import { Scan, ShieldCheck, ShieldAlert, Clock, ArrowLeft, Loader2, CheckSquare, FileText } from 'lucide-react';
 import QRScanner from './QRScanner';
 import VisitorLogs from './VisitorLogs';
 import { VisitorData, SecurityLog } from '../types';
-import { logVisitorEntry } from '../services/gemini';
 import { saveLog, getLogs } from '../services/storage';
 
 interface GuardDashboardProps {
@@ -13,36 +12,27 @@ interface GuardDashboardProps {
 
 type DashboardView = 'HOME' | 'SCANNER' | 'LOGS';
 
-// Helper to format log text
-const formatLogContent = (text: string) => {
-  if (!text) return null;
-  const cleanText = text.replace(/^"|"$/g, ''); 
-  return cleanText.split(/(\*\*.*?\*\*)/g).map((part, index) => {
-    if (part.startsWith('**') && part.endsWith('**')) {
-      return <span key={index} className="font-semibold text-emerald-400">{part.slice(2, -2)}</span>;
-    }
-    return <span key={index} className="text-slate-300">{part}</span>;
-  });
-};
-
 const GuardDashboard: React.FC<GuardDashboardProps> = ({ onBack }) => {
   const [view, setView] = useState<DashboardView>('HOME');
   const [scannedData, setScannedData] = useState<VisitorData | null>(null);
   const [status, setStatus] = useState<'IDLE' | 'VALID' | 'EXPIRED' | 'INVALID'>('IDLE');
   const [isLogging, setIsLogging] = useState(false);
-  const [aiLog, setAiLog] = useState<string | null>(null);
+  const [entrySuccess, setEntrySuccess] = useState(false);
   
   // Stats for the dashboard button
   const [todayCount, setTodayCount] = useState(0);
 
   // Update stats whenever we are on the Home view
   useEffect(() => {
-    if (view === 'HOME') {
-      const logs = getLogs();
-      const today = new Date().setHours(0,0,0,0);
-      const count = logs.filter(l => new Date(l.checkInTime).setHours(0,0,0,0) === today).length;
-      setTodayCount(count);
-    }
+    const fetchCount = async () => {
+      if (view === 'HOME') {
+        const logs = await getLogs();
+        const today = new Date().setHours(0,0,0,0);
+        const count = logs.filter(l => new Date(l.checkInTime).setHours(0,0,0,0) === today).length;
+        setTodayCount(count);
+      }
+    };
+    fetchCount();
   }, [view]);
 
   const handleScan = (data: string) => {
@@ -68,25 +58,21 @@ const GuardDashboard: React.FC<GuardDashboardProps> = ({ onBack }) => {
     if (!scannedData) return;
     setIsLogging(true);
     
-    // 1. Generate AI Log
-    const logText = await logVisitorEntry(scannedData, status);
-    setAiLog(logText);
-    
-    // 2. Save to Storage
+    // Save to Storage (Supabase)
     const newLogEntry: SecurityLog = {
       id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
       visitorName: scannedData.fullName,
       icNumber: scannedData.icNumber,
       carPlate: scannedData.carPlate,
-      // Updated destination format to include Unit
       destination: `Blk ${scannedData.blockNumber} - ${scannedData.lotNumber} - ${scannedData.unitNumber}`,
       checkInTime: new Date().toISOString(),
       status: status === 'VALID' ? 'GRANTED' : (status === 'EXPIRED' ? 'EXPIRED' : 'DENIED'),
-      aiAnalysis: logText
+      aiAnalysis: "Standard Entry Logged" // Static value since AI is removed
     };
     
-    saveLog(newLogEntry);
+    await saveLog(newLogEntry);
     setIsLogging(false);
+    setEntrySuccess(true);
     
     // Update count immediately after saving
     setTodayCount(prev => prev + 1);
@@ -95,7 +81,7 @@ const GuardDashboard: React.FC<GuardDashboardProps> = ({ onBack }) => {
   const resetScanner = () => {
     setScannedData(null);
     setStatus('IDLE');
-    setAiLog(null);
+    setEntrySuccess(false);
     setView('SCANNER');
   };
 
@@ -188,7 +174,7 @@ const GuardDashboard: React.FC<GuardDashboardProps> = ({ onBack }) => {
                   <p className="text-lg font-medium text-white font-mono">{scannedData.icNumber}</p>
                 </div>
                 <div>
-                  <label className="text-xs text-slate-400 uppercase tracking-wider">Car Plate</label>
+                  <label className="text-xs text-slate-400 uppercase tracking-wider">Vehicle No.</label>
                   <p className="text-lg font-medium text-white font-mono">{scannedData.carPlate || 'N/A'}</p>
                 </div>
                 <div>
@@ -206,22 +192,20 @@ const GuardDashboard: React.FC<GuardDashboardProps> = ({ onBack }) => {
             </div>
 
             {/* Actions */}
-            {aiLog ? (
+            {entrySuccess ? (
                <div className="bg-slate-800 rounded-xl overflow-hidden shadow-xl border border-slate-700 animate-fade-in">
                   <div className="p-4 bg-slate-900 border-b border-slate-700 flex items-center gap-2">
                      <ShieldCheck size={20} className="text-emerald-400" />
                      <h3 className="font-semibold text-white">Entry Logged Successfully</h3>
                   </div>
                   
-                  <div className="p-6">
-                     <div className="bg-slate-950 p-4 rounded-lg border border-slate-800 mb-6">
-                       <div className="text-xs font-bold text-indigo-400 mb-2 uppercase tracking-wide flex items-center gap-1.5">
-                         <Sparkles size={12} /> System Audit Trail
-                       </div>
-                       <p className="text-slate-400 text-sm leading-relaxed">
-                         {formatLogContent(aiLog)}
-                       </p>
+                  <div className="p-6 text-center">
+                     <div className="flex items-center justify-center w-16 h-16 bg-emerald-500/10 rounded-full mx-auto mb-4">
+                       <CheckSquare size={32} className="text-emerald-500" />
                      </div>
+                     <p className="text-slate-300 mb-6">
+                       The visitor check-in has been recorded in the secure digital logbook.
+                     </p>
 
                      <div className="flex gap-4">
                         <button 

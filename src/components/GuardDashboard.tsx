@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Scan, ShieldCheck, ShieldAlert, Clock, ArrowLeft, Loader2, CheckSquare, FileText, Car } from 'lucide-react';
+import { Scan, ShieldCheck, ShieldAlert, Clock, ArrowLeft, Loader2, CheckSquare, FileText } from 'lucide-react';
 import QRScanner from './QRScanner';
 import VisitorLogs from './VisitorLogs';
 import { VisitorData, SecurityLog } from '../types';
@@ -173,7 +174,7 @@ const GuardDashboard: React.FC<GuardDashboardProps> = ({ onBack }) => {
                   <p className="text-lg font-medium text-white font-mono">{scannedData.icNumber}</p>
                 </div>
                 <div>
-                  <label className="text-xs text-slate-400 uppercase tracking-wider">Car Plate</label>
+                  <label className="text-xs text-slate-400 uppercase tracking-wider">Vehicle No.</label>
                   <p className="text-lg font-medium text-white font-mono">{scannedData.carPlate || 'N/A'}</p>
                 </div>
                 <div>

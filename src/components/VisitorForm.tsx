@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { VisitorData } from '../types';
@@ -154,7 +153,7 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Car Plate Number</label>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Vehicle No.</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Car className="text-slate-500" size={18} />

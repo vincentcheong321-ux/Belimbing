@@ -61,9 +61,6 @@ export default function App() {
                 <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
                   Belim<span className="text-emerald-400">bing</span>
                 </h1>
-                <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto">
-                  Secure, efficient, and digital visitor management system for modern residences.
-                </p>
               </div>
 
               {/* Main Action Area - Visitor Check-in Only */}
