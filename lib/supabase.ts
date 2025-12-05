@@ -1,7 +1,5 @@
-
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Safe access to window globals
 const getGlobal = (key: string) => {
   if (typeof window !== 'undefined' && (window as any)[key]) {
     return (window as any)[key];

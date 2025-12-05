@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { VisitorData } from '../types';
-import { User, Phone, MapPin, Building, CreditCard, ArrowLeft, Download, CheckCircle, Car, Home } from 'lucide-react';
+import { User, Phone, MapPin, Building, CreditCard, ArrowLeft, Download, CheckCircle, CarFront, Home } from 'lucide-react';
 
 interface VisitorFormProps {
   onBack: () => void;
@@ -157,7 +156,7 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
               <label className="block text-sm font-medium text-slate-300 mb-1">Vehicle No.</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Car className="text-slate-500" size={18} />
+                  <CarFront className="text-slate-500" size={18} />
                 </div>
                 <input
                   name="carPlate"

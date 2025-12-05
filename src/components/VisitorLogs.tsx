@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { ArrowLeft, Trash2, Search, FileText, CheckCircle, Clock, Download, Filter, Calendar, ShieldAlert, MapPin, CreditCard, Car, Loader2 } from 'lucide-react';
+import { ArrowLeft, Trash2, Search, FileText, CheckCircle, Clock, Download, Filter, Calendar, ShieldAlert, MapPin, CreditCard, CarFront, Loader2 } from 'lucide-react';
 import { SecurityLog } from '../types';
 import { getLogs, clearLogs } from '../services/storage';
 
@@ -259,7 +259,7 @@ const VisitorLogs: React.FC<VisitorLogsProps> = ({ onBack }) => {
                              </div>
                              <div>
                                 <div className="text-xs text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1">
-                                  <Car size={12} /> Vehicle No.
+                                  <CarFront size={12} /> Vehicle No.
                                 </div>
                                 <div className="font-mono text-slate-200 text-sm bg-slate-900/50 p-2 rounded border border-slate-700/50">
                                   {log.carPlate || 'N/A'}

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Shield, UserPlus, Presentation } from 'lucide-react';
 import VisitorForm from './components/VisitorForm';
