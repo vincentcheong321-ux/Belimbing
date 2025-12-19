@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, X, Shield, Smartphone, Zap, Database, Lock, Layout, CheckCircle, User, CreditCard, Scan, FileText, Activity } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Shield, Smartphone, Zap, Database, Lock, Layout, CheckCircle, User, CreditCard, Scan, FileText, Activity, Code, Cloud, Cpu, ShieldCheck, Tablet } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
 interface ProposalDeckProps {
@@ -111,7 +111,6 @@ const DemoSimulation = () => {
 const ProposalDeck: React.FC<ProposalDeckProps> = ({ onClose }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Moved slides inside the component to ensure onClose is in scope
   const slides = [
     {
       id: 1,
@@ -189,15 +188,15 @@ const ProposalDeck: React.FC<ProposalDeckProps> = ({ onClose }) => {
 
           <div className="grid md:grid-cols-3 gap-8">
              <div className="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/10">
-               <div className="text-emerald-300 font-bold text-lg mb-4">3.1 Visitor Registration</div>
+               <div className="text-emerald-300 font-bold text-lg mb-4">Visitor Registration</div>
                <p className="text-emerald-100/60 text-sm">Visitors enter information (Name, IC, Vehicle No) via web link. System automatically generates a unique QR code for fast check-in.</p>
              </div>
              <div className="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/10">
-               <div className="text-emerald-300 font-bold text-lg mb-4">3.2 Guard Check-In</div>
+               <div className="text-emerald-300 font-bold text-lg mb-4">Guard Check-In</div>
                <p className="text-emerald-100/60 text-sm">Guard scans the QR code. All visitor details appear instantly. Guard confirms entry and the system logs it to the database.</p>
              </div>
              <div className="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/10">
-               <div className="text-emerald-300 font-bold text-lg mb-4">3.3 Digital Visitor Log</div>
+               <div className="text-emerald-300 font-bold text-lg mb-4">Digital Visitor Log</div>
                <p className="text-emerald-100/60 text-sm">All entries recorded in a secure database. Searchable, downloadable, and auditable with accurate timestamps.</p>
              </div>
           </div>
@@ -241,9 +240,6 @@ const ProposalDeck: React.FC<ProposalDeckProps> = ({ onClose }) => {
       bg: "bg-slate-900",
       content: (
          <div className="flex flex-col items-center justify-center h-full text-center max-w-5xl mx-auto px-6">
-            <div className="inline-block px-4 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 font-bold uppercase tracking-wider text-sm mb-4">
-              Section 3.4
-            </div>
             <h2 className="text-4xl font-bold text-white mb-12">Benefits to the Condominium</h2>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 text-left w-full">
@@ -267,14 +263,40 @@ const ProposalDeck: React.FC<ProposalDeckProps> = ({ onClose }) => {
     },
     {
       id: 6,
+      bg: "bg-slate-850",
+      content: (
+        <div className="flex flex-col items-center justify-center h-full text-center max-w-5xl mx-auto px-6">
+          <div className="inline-block px-4 py-2 rounded-lg bg-indigo-500/10 text-indigo-400 font-bold uppercase tracking-wider text-sm mb-4">
+            Architecture
+          </div>
+          <h2 className="text-4xl font-bold text-white mb-12">Technical Overview</h2>
+          
+          <div className="grid md:grid-cols-2 gap-6 text-left w-full">
+            {[
+              { icon: Globe, title: "Web-Based", desc: "No application installation required. Accessible via any browser." },
+              { icon: Code, title: "Modern Stack", desc: "Built using modern, scalable technologies for longevity." },
+              { icon: Cloud, title: "Cloud-Hosted", desc: "Securely hosted in the cloud with automated data backups." },
+              { icon: Lock, title: "Enterprise Security", desc: "Secure API endpoints and advanced database encryption." },
+              { icon: Tablet, title: "Device Agnostic", desc: "Works perfectly on phones or tablets at the guardhouse." }
+            ].map((tech, i) => (
+              <div key={i} className="bg-slate-800 p-6 rounded-2xl border border-slate-700 flex items-start gap-4">
+                <div className="text-indigo-400 mt-1 shrink-0"><tech.icon size={24} /></div>
+                <div>
+                  <h3 className="text-white font-bold mb-1">{tech.title}</h3>
+                  <p className="text-slate-400 text-sm leading-relaxed">{tech.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 7,
       bg: "bg-gradient-to-br from-slate-900 to-emerald-900",
       content: (
          <div className="flex flex-col items-center justify-center h-full text-center">
             <h2 className="text-5xl font-bold text-white mb-8">Modernize Today</h2>
-            <div className="text-2xl text-emerald-300 font-light mb-12">
-               Belimbing: Secure. Smart. Simple.
-            </div>
-            {/* Fix: onClose is now in scope within the component */}
             <button onClick={onClose} className="bg-white text-emerald-900 px-10 py-4 rounded-full font-bold text-xl hover:scale-105 transition-transform shadow-2xl">
                Explore System
             </button>
@@ -302,7 +324,7 @@ const ProposalDeck: React.FC<ProposalDeckProps> = ({ onClose }) => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentSlide, slides.length]); // Updated dependency list
+  }, [currentSlide, slides.length]);
 
   return (
     <div className="fixed inset-0 z-50 bg-black text-white flex flex-col">
@@ -350,5 +372,12 @@ const ProposalDeck: React.FC<ProposalDeckProps> = ({ onClose }) => {
     </div>
   );
 };
+
+// Internal icon proxy for Globe which was missing in imports
+const Globe = ({ size, className }: { size: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+  </svg>
+);
 
 export default ProposalDeck;
