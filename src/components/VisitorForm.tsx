@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { VisitorData } from '../types';
-import { User, Phone, MapPin, Building, CreditCard, ArrowLeft, Download, CheckCircle, CarFront, Home } from 'lucide-react';
+import { User, Phone, MapPin, Building, CreditCard, ArrowLeft, Download, CheckCircle, Car, Home, AlertCircle } from 'lucide-react';
 
 interface VisitorFormProps {
   onBack: () => void;
@@ -17,11 +17,17 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
     lotNumber: '',
     unitNumber: ''
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [generatedQR, setGeneratedQR] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+
     if (name === 'icNumber') {
       // Restrict to digits only
       const numericValue = value.replace(/\D/g, '');
@@ -42,8 +48,51 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
     }
   };
 
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    let isValid = true;
+
+    if (!formData.fullName || formData.fullName.trim().length < 3) {
+      newErrors.fullName = 'Name must be at least 3 characters.';
+      isValid = false;
+    }
+
+    if (!formData.icNumber || formData.icNumber.length < 12) {
+      newErrors.icNumber = 'IC Number must be at least 12 digits.';
+      isValid = false;
+    }
+
+    if (!formData.phoneNumber || formData.phoneNumber.length < 10) {
+      newErrors.phoneNumber = 'Invalid phone number.';
+      isValid = false;
+    }
+
+    if (!formData.blockNumber) {
+      newErrors.blockNumber = 'Required';
+      isValid = false;
+    }
+
+    if (!formData.lotNumber) {
+      newErrors.lotNumber = 'Required';
+      isValid = false;
+    }
+
+    if (!formData.unitNumber) {
+      newErrors.unitNumber = 'Required';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
     const payload: VisitorData = {
       fullName: formData.fullName!,
       phoneNumber: formData.phoneNumber!,
@@ -119,44 +168,45 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
               <label className="block text-sm font-medium text-slate-300 mb-1">Full Name (as per IC)</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="text-slate-500" size={18} />
+                  <User className={`text-slate-500 ${errors.fullName ? 'text-red-500' : ''}`} size={18} />
                 </div>
                 <input
-                  required
                   name="fullName"
                   type="text"
                   value={formData.fullName}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all"
+                  className={`block w-full pl-10 pr-3 py-3 bg-slate-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all ${errors.fullName ? 'border-red-500' : 'border-slate-700'}`}
                   placeholder="Ali Bin Abu"
                 />
               </div>
+              {errors.fullName && <p className="mt-1 text-xs text-red-400 flex items-center gap-1"><AlertCircle size={12}/> {errors.fullName}</p>}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-1">IC Number (Digits Only)</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <CreditCard className="text-slate-500" size={18} />
+                  <CreditCard className={`text-slate-500 ${errors.icNumber ? 'text-red-500' : ''}`} size={18} />
                 </div>
                 <input
-                  required
                   name="icNumber"
                   type="text"
                   inputMode="numeric"
                   value={formData.icNumber}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all"
+                  maxLength={12}
+                  className={`block w-full pl-10 pr-3 py-3 bg-slate-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all ${errors.icNumber ? 'border-red-500' : 'border-slate-700'}`}
                   placeholder="e.g. 901020105555"
                 />
               </div>
+              {errors.icNumber && <p className="mt-1 text-xs text-red-400 flex items-center gap-1"><AlertCircle size={12}/> {errors.icNumber}</p>}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-1">Vehicle No.</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <CarFront className="text-slate-500" size={18} />
+                  <Car className="text-slate-500" size={18} />
                 </div>
                 <input
                   name="carPlate"
@@ -173,19 +223,19 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
               <label className="block text-sm font-medium text-slate-300 mb-1">Phone Number</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Phone className="text-slate-500" size={18} />
+                  <Phone className={`text-slate-500 ${errors.phoneNumber ? 'text-red-500' : ''}`} size={18} />
                 </div>
                 <input
-                  required
                   name="phoneNumber"
                   type="tel"
                   inputMode="numeric"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all"
+                  className={`block w-full pl-10 pr-3 py-3 bg-slate-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all ${errors.phoneNumber ? 'border-red-500' : 'border-slate-700'}`}
                   placeholder="0123456789"
                 />
               </div>
+              {errors.phoneNumber && <p className="mt-1 text-xs text-red-400 flex items-center gap-1"><AlertCircle size={12}/> {errors.phoneNumber}</p>}
             </div>
 
             <div className="grid grid-cols-3 gap-3">
@@ -193,15 +243,14 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
                 <label className="block text-sm font-medium text-slate-300 mb-1">Block</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Building className="text-slate-500" size={18} />
+                    <Building className={`text-slate-500 ${errors.blockNumber ? 'text-red-500' : ''}`} size={18} />
                   </div>
                   <input
-                    required
                     name="blockNumber"
                     type="text"
                     value={formData.blockNumber}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all"
+                    className={`block w-full pl-10 pr-3 py-3 bg-slate-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all ${errors.blockNumber ? 'border-red-500' : 'border-slate-700'}`}
                     placeholder="A"
                   />
                 </div>
@@ -210,15 +259,14 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
                 <label className="block text-sm font-medium text-slate-300 mb-1">Lot No.</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <MapPin className="text-slate-500" size={18} />
+                    <MapPin className={`text-slate-500 ${errors.lotNumber ? 'text-red-500' : ''}`} size={18} />
                   </div>
                   <input
-                    required
                     name="lotNumber"
                     type="text"
                     value={formData.lotNumber}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all"
+                    className={`block w-full pl-10 pr-3 py-3 bg-slate-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all ${errors.lotNumber ? 'border-red-500' : 'border-slate-700'}`}
                     placeholder="10"
                   />
                 </div>
@@ -227,15 +275,14 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
                 <label className="block text-sm font-medium text-slate-300 mb-1">Unit No.</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Home className="text-slate-500" size={18} />
+                    <Home className={`text-slate-500 ${errors.unitNumber ? 'text-red-500' : ''}`} size={18} />
                   </div>
                   <input
-                    required
                     name="unitNumber"
                     type="text"
                     value={formData.unitNumber}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all"
+                    className={`block w-full pl-10 pr-3 py-3 bg-slate-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all ${errors.unitNumber ? 'border-red-500' : 'border-slate-700'}`}
                     placeholder="05"
                   />
                 </div>
