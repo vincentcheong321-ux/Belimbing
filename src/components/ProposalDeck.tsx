@@ -205,6 +205,62 @@ const ProposalDeck: React.FC<ProposalDeckProps> = ({ onClose }) => {
     },
     {
       id: 4,
+      bg: "bg-slate-900",
+      content: (
+         <div className="flex flex-col items-center justify-center h-full text-center max-w-5xl mx-auto px-6">
+            <h2 className="text-4xl font-bold text-white mb-12">Benefits to the Condominium</h2>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 text-left w-full">
+               {[
+                 { icon: Zap, title: "Faster Check-In", desc: "Reduces congestion at the guard house significantly." },
+                 { icon: Database, title: "Cleaner Records", desc: "Standardized digital data eliminates messy handwriting." },
+                 { icon: Activity, title: "Reduced Workload", desc: "Guards focus on security instead of data entry." },
+                 { icon: Shield, title: "Higher Security", desc: "Accurate, real-time records for immediate auditing." },
+                 { icon: Layout, title: "Modernization", desc: "Updates the property image to modern standards." },
+                 { icon: Smartphone, title: "Zero Hardware", desc: "No purchase needed. Works on existing smartphones/tablets." }
+               ].map((benefit, i) => (
+                  <div key={i} className="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                    <div className="text-emerald-400 mb-3"><benefit.icon size={24} /></div>
+                    <h3 className="text-white font-bold mb-1">{benefit.title}</h3>
+                    <p className="text-slate-400 text-xs leading-relaxed">{benefit.desc}</p>
+                  </div>
+               ))}
+            </div>
+         </div>
+      )
+    },
+    {
+      id: 5,
+      bg: "bg-slate-850",
+      content: (
+        <div className="flex flex-col items-center justify-center h-full text-center max-w-5xl mx-auto px-6">
+          <div className="inline-block px-4 py-2 rounded-lg bg-indigo-500/10 text-indigo-400 font-bold uppercase tracking-wider text-sm mb-4">
+            Architecture
+          </div>
+          <h2 className="text-4xl font-bold text-white mb-12">Technical Overview</h2>
+          
+          <div className="grid md:grid-cols-2 gap-6 text-left w-full">
+            {[
+              { icon: Globe, title: "Web-Based", desc: "No application installation required. Accessible via any browser." },
+              { icon: Code, title: "Modern Stack", desc: "Built using modern, scalable technologies for longevity." },
+              { icon: Cloud, title: "Cloud-Hosted", desc: "Securely hosted in the cloud with automated data backups." },
+              { icon: Lock, title: "Enterprise Security", desc: "Secure API endpoints and advanced database encryption." },
+              { icon: Tablet, title: "Device Agnostic", desc: "Works perfectly on phones or tablets at the guardhouse." }
+            ].map((tech, i) => (
+              <div key={i} className="bg-slate-800 p-6 rounded-2xl border border-slate-700 flex items-start gap-4">
+                <div className="text-indigo-400 mt-1 shrink-0"><tech.icon size={24} /></div>
+                <div>
+                  <h3 className="text-white font-bold mb-1">{tech.title}</h3>
+                  <p className="text-slate-400 text-sm leading-relaxed">{tech.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 6,
       bg: "bg-indigo-950",
       content: (
         <div className="grid md:grid-cols-2 gap-16 items-center h-full px-12">
@@ -231,62 +287,6 @@ const ProposalDeck: React.FC<ProposalDeckProps> = ({ onClose }) => {
                   <p className="text-indigo-200/80">Guard scans the pass for 3-second verification and logging.</p>
                </div>
             </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 5,
-      bg: "bg-slate-900",
-      content: (
-         <div className="flex flex-col items-center justify-center h-full text-center max-w-5xl mx-auto px-6">
-            <h2 className="text-4xl font-bold text-white mb-12">Benefits to the Condominium</h2>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 text-left w-full">
-               {[
-                 { icon: Zap, title: "Faster Check-In", desc: "Reduces congestion at the guard house significantly." },
-                 { icon: Database, title: "Cleaner Records", desc: "Standardized digital data eliminates messy handwriting." },
-                 { icon: Activity, title: "Reduced Workload", desc: "Guards focus on security instead of data entry." },
-                 { icon: Shield, title: "Higher Security", desc: "Accurate, real-time records for immediate auditing." },
-                 { icon: Layout, title: "Modernization", desc: "Updates the property image to modern standards." },
-                 { icon: Smartphone, title: "Zero Hardware", desc: "No purchase needed. Works on existing smartphones/tablets." }
-               ].map((benefit, i) => (
-                  <div key={i} className="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                    <div className="text-emerald-400 mb-3"><benefit.icon size={24} /></div>
-                    <h3 className="text-white font-bold mb-1">{benefit.title}</h3>
-                    <p className="text-slate-400 text-xs leading-relaxed">{benefit.desc}</p>
-                  </div>
-               ))}
-            </div>
-         </div>
-      )
-    },
-    {
-      id: 6,
-      bg: "bg-slate-850",
-      content: (
-        <div className="flex flex-col items-center justify-center h-full text-center max-w-5xl mx-auto px-6">
-          <div className="inline-block px-4 py-2 rounded-lg bg-indigo-500/10 text-indigo-400 font-bold uppercase tracking-wider text-sm mb-4">
-            Architecture
-          </div>
-          <h2 className="text-4xl font-bold text-white mb-12">Technical Overview</h2>
-          
-          <div className="grid md:grid-cols-2 gap-6 text-left w-full">
-            {[
-              { icon: Globe, title: "Web-Based", desc: "No application installation required. Accessible via any browser." },
-              { icon: Code, title: "Modern Stack", desc: "Built using modern, scalable technologies for longevity." },
-              { icon: Cloud, title: "Cloud-Hosted", desc: "Securely hosted in the cloud with automated data backups." },
-              { icon: Lock, title: "Enterprise Security", desc: "Secure API endpoints and advanced database encryption." },
-              { icon: Tablet, title: "Device Agnostic", desc: "Works perfectly on phones or tablets at the guardhouse." }
-            ].map((tech, i) => (
-              <div key={i} className="bg-slate-800 p-6 rounded-2xl border border-slate-700 flex items-start gap-4">
-                <div className="text-indigo-400 mt-1 shrink-0"><tech.icon size={24} /></div>
-                <div>
-                  <h3 className="text-white font-bold mb-1">{tech.title}</h3>
-                  <p className="text-slate-400 text-sm leading-relaxed">{tech.desc}</p>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       )
@@ -373,7 +373,7 @@ const ProposalDeck: React.FC<ProposalDeckProps> = ({ onClose }) => {
   );
 };
 
-// Internal icon proxy for Globe which was missing in imports
+// Internal icon proxy for Globe
 const Globe = ({ size, className }: { size: number, className?: string }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
     <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
