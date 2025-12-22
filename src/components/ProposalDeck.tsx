@@ -338,9 +338,8 @@ const ProposalDeck: React.FC<ProposalDeckProps> = ({ onClose }) => {
   return (
     <div className="fixed inset-0 z-50 bg-black text-white flex flex-col">
       <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-center z-50">
-         <div className="font-bold text-slate-500 text-sm tracking-widest uppercase">
-            Proposal Slide {currentSlide + 1}/{slides.length}
-         </div>
+         {/* Slide indicator removed as requested */}
+         <div className="flex-1"></div>
          <button 
            onClick={onClose}
            className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors backdrop-blur-md"

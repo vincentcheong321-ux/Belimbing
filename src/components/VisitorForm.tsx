@@ -33,9 +33,9 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
       const val = value.toUpperCase().replace(/[^A-Z0-9]/g, '');
       setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: val }));
     } else if (name === 'phoneNumber') {
-      // Allow digits and +, remove other chars
-      const val = value.replace(/[^0-9+]/g, '');
-      setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: val }));
+      // Restrict to digits only
+      const numericValue = value.replace(/\D/g, '');
+      setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: numericValue }));
     } else if (name === 'carPlate') {
       // Auto-uppercase
       setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: value.toUpperCase() }));
@@ -227,11 +227,11 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
                 <input
                   name="phoneNumber"
                   type="tel"
-                  inputMode="tel"
+                  inputMode="numeric"
                   value={formData.phoneNumber}
                   onChange={handleChange}
                   className={`block w-full pl-10 pr-3 py-3 bg-slate-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all ${errors.phoneNumber ? 'border-red-500' : 'border-slate-700'}`}
-                  placeholder="0123456789 or +60123456789"
+                  placeholder="0123456789"
                 />
               </div>
               {errors.phoneNumber && <p className="mt-1 text-xs text-red-400 flex items-center gap-1"><AlertCircle size={12}/> {errors.phoneNumber}</p>}
