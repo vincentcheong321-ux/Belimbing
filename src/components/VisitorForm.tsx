@@ -29,13 +29,13 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
     }
 
     if (name === 'icNumber') {
-      // Restrict to digits only
-      const numericValue = value.replace(/\D/g, '');
-      setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: numericValue }));
+      // Allow alphanumeric for Passport/Army ID, uppercase
+      const val = value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: val }));
     } else if (name === 'phoneNumber') {
-      // Restrict to digits only
-      const numericValue = value.replace(/\D/g, '');
-      setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: numericValue }));
+      // Allow digits and +, remove other chars
+      const val = value.replace(/[^0-9+]/g, '');
+      setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: val }));
     } else if (name === 'carPlate') {
       // Auto-uppercase
       setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: value.toUpperCase() }));
@@ -57,12 +57,12 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
       isValid = false;
     }
 
-    if (!formData.icNumber || formData.icNumber.length < 12) {
-      newErrors.icNumber = 'IC Number must be at least 12 digits.';
+    if (!formData.icNumber || formData.icNumber.length < 6) {
+      newErrors.icNumber = 'IC/Passport must be at least 6 characters.';
       isValid = false;
     }
 
-    if (!formData.phoneNumber || formData.phoneNumber.length < 10) {
+    if (!formData.phoneNumber || formData.phoneNumber.length < 9) {
       newErrors.phoneNumber = 'Invalid phone number.';
       isValid = false;
     }
@@ -165,7 +165,7 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Full Name (as per IC)</label>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Full Name (as per IC/Passport)</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <User className={`text-slate-500 ${errors.fullName ? 'text-red-500' : ''}`} size={18} />
@@ -183,7 +183,7 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">IC Number (Digits Only)</label>
+              <label className="block text-sm font-medium text-slate-300 mb-1">IC / Passport Number</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <CreditCard className={`text-slate-500 ${errors.icNumber ? 'text-red-500' : ''}`} size={18} />
@@ -191,12 +191,11 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
                 <input
                   name="icNumber"
                   type="text"
-                  inputMode="numeric"
                   value={formData.icNumber}
                   onChange={handleChange}
-                  maxLength={12}
+                  maxLength={15}
                   className={`block w-full pl-10 pr-3 py-3 bg-slate-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all ${errors.icNumber ? 'border-red-500' : 'border-slate-700'}`}
-                  placeholder="e.g. 901020105555"
+                  placeholder="e.g. 901020105555 or A1234567"
                 />
               </div>
               {errors.icNumber && <p className="mt-1 text-xs text-red-400 flex items-center gap-1"><AlertCircle size={12}/> {errors.icNumber}</p>}
@@ -228,11 +227,11 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
                 <input
                   name="phoneNumber"
                   type="tel"
-                  inputMode="numeric"
+                  inputMode="tel"
                   value={formData.phoneNumber}
                   onChange={handleChange}
                   className={`block w-full pl-10 pr-3 py-3 bg-slate-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all ${errors.phoneNumber ? 'border-red-500' : 'border-slate-700'}`}
-                  placeholder="0123456789"
+                  placeholder="0123456789 or +60123456789"
                 />
               </div>
               {errors.phoneNumber && <p className="mt-1 text-xs text-red-400 flex items-center gap-1"><AlertCircle size={12}/> {errors.phoneNumber}</p>}

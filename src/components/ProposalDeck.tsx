@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, X, Shield, Smartphone, Zap, Database, Lock, Layout, CheckCircle, User, CreditCard, Scan, FileText, Activity, Code, Cloud, Cpu, ShieldCheck, Tablet } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Shield, Smartphone, Zap, Database, Lock, Layout, CheckCircle, User, CreditCard, Scan, FileText, Activity, Code, Cloud, Cpu, ShieldCheck, Tablet, Car } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
 interface ProposalDeckProps {
@@ -10,29 +9,39 @@ interface ProposalDeckProps {
 // --- Demo Simulation Components ---
 
 const DemoScreen1Visitor = () => (
-  <div className="p-6 h-full flex flex-col bg-white">
-    <div className="mb-6">
-       <h3 className="font-bold text-slate-800 text-lg">Visitor Reg</h3>
-       <p className="text-xs text-slate-400">Step 1: Visitor fills details</p>
+  <div className="p-5 h-full flex flex-col bg-white">
+    <div className="mb-3">
+       <h3 className="font-bold text-slate-800 text-lg leading-tight">Visitor Reg</h3>
+       <p className="text-[10px] text-slate-400">Step 1: Enter details</p>
     </div>
-    <div className="space-y-3 opacity-80">
-       <div className="bg-slate-100 p-3 rounded-lg flex gap-3 items-center border border-slate-200">
-          <User size={16} className="text-slate-400" />
-          <div className="h-2 w-24 bg-slate-300 rounded"></div>
+    <div className="space-y-2 opacity-80 flex-1">
+       {/* Name */}
+       <div className="bg-slate-100 p-2 rounded-lg flex gap-2 items-center border border-slate-200">
+          <User size={12} className="text-slate-400" />
+          <div className="h-1.5 w-20 bg-slate-300 rounded"></div>
        </div>
-       <div className="bg-slate-100 p-3 rounded-lg flex gap-3 items-center border border-slate-200">
-          <CreditCard size={16} className="text-slate-400" />
-          <div className="h-2 w-32 bg-slate-300 rounded"></div>
+       {/* IC */}
+       <div className="bg-slate-100 p-2 rounded-lg flex gap-2 items-center border border-slate-200">
+          <CreditCard size={12} className="text-slate-400" />
+          <div className="h-1.5 w-24 bg-slate-300 rounded"></div>
        </div>
-       <div className="grid grid-cols-2 gap-2">
-          <div className="bg-slate-100 p-3 rounded-lg flex gap-3 items-center border border-slate-200">
-             <div className="h-2 w-8 bg-slate-300 rounded"></div>
-          </div>
-          <div className="bg-slate-100 p-3 rounded-lg flex gap-3 items-center border border-slate-200">
-             <div className="h-2 w-8 bg-slate-300 rounded"></div>
-          </div>
+       {/* Vehicle */}
+       <div className="bg-slate-100 p-2 rounded-lg flex gap-2 items-center border border-slate-200">
+          <Car size={12} className="text-slate-400" />
+          <div className="h-1.5 w-16 bg-slate-300 rounded"></div>
        </div>
-       <div className="mt-8 bg-emerald-500 h-10 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-lg shadow-emerald-200">
+       {/* Phone */}
+       <div className="bg-slate-100 p-2 rounded-lg flex gap-2 items-center border border-slate-200">
+          <Smartphone size={12} className="text-slate-400" />
+          <div className="h-1.5 w-20 bg-slate-300 rounded"></div>
+       </div>
+       {/* Unit Details */}
+       <div className="grid grid-cols-3 gap-1.5">
+          <div className="bg-slate-100 p-2 rounded-lg border border-slate-200 flex items-center justify-center"><div className="h-1 w-full bg-slate-300 rounded"></div></div>
+          <div className="bg-slate-100 p-2 rounded-lg border border-slate-200 flex items-center justify-center"><div className="h-1 w-full bg-slate-300 rounded"></div></div>
+          <div className="bg-slate-100 p-2 rounded-lg border border-slate-200 flex items-center justify-center"><div className="h-1 w-full bg-slate-300 rounded"></div></div>
+       </div>
+       <div className="mt-auto bg-emerald-500 h-9 rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-emerald-200">
           Generate Pass
        </div>
     </div>
@@ -189,7 +198,7 @@ const ProposalDeck: React.FC<ProposalDeckProps> = ({ onClose }) => {
           <div className="grid md:grid-cols-3 gap-8">
              <div className="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/10">
                <div className="text-emerald-300 font-bold text-lg mb-4">Visitor Registration</div>
-               <p className="text-emerald-100/60 text-sm">Visitors enter information (Name, IC, Vehicle No) via web link. System automatically generates a unique QR code for fast check-in.</p>
+               <p className="text-emerald-100/60 text-sm">Visitors enter information (Name, IC, Phone, Vehicle, Unit) via a secure web link. System automatically generates a unique QR code for fast check-in.</p>
              </div>
              <div className="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/10">
                <div className="text-emerald-300 font-bold text-lg mb-4">Guard Check-In</div>
