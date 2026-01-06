@@ -3,6 +3,7 @@ import { SecurityLog } from '../types';
 import { supabase } from '../lib/supabase';
 
 const STORAGE_KEY = 'belimbing_logs_v1';
+const BLACKLIST_KEY = 'belimbing_blacklist_v1';
 
 // --- LocalStorage Helpers (Fallback) ---
 
@@ -32,25 +33,45 @@ const clearLogsLocal = (): void => {
   localStorage.removeItem(STORAGE_KEY);
 };
 
+// --- Blacklist Management ---
+
+export const getBlacklist = (): string[] => {
+  try {
+    const list = localStorage.getItem(BLACKLIST_KEY);
+    return list ? JSON.parse(list) : [];
+  } catch {
+    return [];
+  }
+};
+
+export const addToBlacklist = (icNumber: string): void => {
+  const list = getBlacklist();
+  if (!list.includes(icNumber)) {
+    localStorage.setItem(BLACKLIST_KEY, JSON.stringify([...list, icNumber]));
+  }
+};
+
+export const removeFromBlacklist = (icNumber: string): void => {
+  const list = getBlacklist();
+  localStorage.setItem(BLACKLIST_KEY, JSON.stringify(list.filter(ic => ic !== icNumber)));
+};
+
 // --- Main Service Methods ---
 
-// Map DB snake_case to TS camelCase
 const mapToLog = (row: any): SecurityLog => ({
   id: row.id,
   visitorName: row.visitor_name,
   icNumber: row.ic_number,
   carPlate: row.car_plate,
   destination: row.destination,
+  purpose: row.purpose || 'General Visit',
   checkInTime: row.check_in_time,
-  status: row.status as 'GRANTED' | 'DENIED' | 'EXPIRED',
+  status: row.status as any,
   aiAnalysis: row.ai_analysis || ''
 });
 
 export const getLogs = async (): Promise<SecurityLog[]> => {
-  // Fallback if Supabase is not initialized
-  if (!supabase) {
-    return getLogsLocal();
-  }
+  if (!supabase) return getLogsLocal();
 
   try {
     const { data, error } = await supabase
@@ -58,25 +79,15 @@ export const getLogs = async (): Promise<SecurityLog[]> => {
       .select('*')
       .order('check_in_time', { ascending: false });
 
-    if (error) {
-      console.error("Supabase error fetching logs:", error);
-      // Optional: Fallback to local if network fails? 
-      // For now, let's return local logs if DB fetch fails to ensure UI shows something
-      return getLogsLocal(); 
-    }
-
+    if (error) return getLogsLocal(); 
     return data ? data.map(mapToLog) : [];
   } catch (e) {
-    console.error("Failed to fetch logs", e);
     return getLogsLocal();
   }
 };
 
 export const saveLog = async (log: SecurityLog): Promise<boolean> => {
-  // Fallback if Supabase is not initialized
-  if (!supabase) {
-    return saveLogLocal(log);
-  }
+  if (!supabase) return saveLogLocal(log);
 
   try {
     const { error } = await supabase
@@ -87,34 +98,24 @@ export const saveLog = async (log: SecurityLog): Promise<boolean> => {
         ic_number: log.icNumber,
         car_plate: log.carPlate,
         destination: log.destination,
+        purpose: log.purpose,
         check_in_time: log.checkInTime,
         status: log.status,
         ai_analysis: log.aiAnalysis
       });
 
-    if (error) {
-      console.error("Supabase error saving log:", error);
-      // Attempt local save as backup
-      return saveLogLocal(log);
-    }
+    if (error) return saveLogLocal(log);
     return true;
   } catch (e) {
-    console.error("Failed to save log", e);
     return saveLogLocal(log);
   }
 };
 
 export const clearLogs = async (): Promise<void> => {
-  if (!supabase) {
-    return clearLogsLocal();
-  }
-
+  if (!supabase) return clearLogsLocal();
   try {
-    // Caution: This deletes ALL records that are not the dummy ID (if used for testing)
-    const { error } = await supabase.from('security_logs').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-    if (error) throw error;
+    await supabase.from('security_logs').delete().neq('id', '00000000-0000-0000-0000-000000000000');
   } catch (e) {
-    console.error("Error clearing logs", e);
     clearLogsLocal();
   }
 };

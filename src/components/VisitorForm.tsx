@@ -1,11 +1,21 @@
+
 import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { VisitorData } from '../types';
-import { User, Phone, MapPin, Building, CreditCard, ArrowLeft, Download, CheckCircle, Car, Home, AlertCircle } from 'lucide-react';
+import { User, Phone, MapPin, Building, CreditCard, ArrowLeft, Download, CheckCircle, Car, Home, AlertCircle, Share2, ClipboardList } from 'lucide-react';
 
 interface VisitorFormProps {
   onBack: () => void;
 }
+
+const PURPOSES = [
+  "Friends & Family",
+  "Delivery (Food/Parcel)",
+  "Contractor / Renovation",
+  "Service Provider (Cleaning/Repair)",
+  "Commercial / Meeting",
+  "Other"
+];
 
 const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
   const [formData, setFormData] = useState<Partial<VisitorData>>({
@@ -15,83 +25,55 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
     carPlate: '',
     blockNumber: '',
     lotNumber: '',
-    unitNumber: ''
+    unitNumber: '',
+    purpose: PURPOSES[0]
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [generatedQR, setGeneratedQR] = useState<string | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    
-    // Clear error when user types
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
 
     if (name === 'icNumber') {
-      // Allow alphanumeric for Passport/Army ID, uppercase
       const val = value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-      setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: val }));
+      setFormData((prev: any) => ({ ...prev, [name]: val }));
     } else if (name === 'phoneNumber') {
-      // Restrict to digits only
       const numericValue = value.replace(/\D/g, '');
-      setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: numericValue }));
+      setFormData((prev: any) => ({ ...prev, [name]: numericValue }));
     } else if (name === 'carPlate') {
-      // Auto-uppercase
-      setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: value.toUpperCase() }));
-    } else if (name === 'blockNumber') {
-      // Alphabets only
-      const alphaValue = value.replace(/[^a-zA-Z]/g, '').toUpperCase();
-      setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: alphaValue }));
+      setFormData((prev: any) => ({ ...prev, [name]: value.toUpperCase() }));
     } else {
-      setFormData((prev: Partial<VisitorData>) => ({ ...prev, [name]: value }));
+      setFormData((prev: any) => ({ ...prev, [name]: value }));
     }
   };
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
     let isValid = true;
-
     if (!formData.fullName || formData.fullName.trim().length < 3) {
       newErrors.fullName = 'Name must be at least 3 characters.';
       isValid = false;
     }
-
     if (!formData.icNumber || formData.icNumber.length < 6) {
       newErrors.icNumber = 'IC/Passport must be at least 6 characters.';
       isValid = false;
     }
-
     if (!formData.phoneNumber || formData.phoneNumber.length < 9) {
       newErrors.phoneNumber = 'Invalid phone number.';
       isValid = false;
     }
-
-    if (!formData.blockNumber) {
-      newErrors.blockNumber = 'Required';
+    if (!formData.blockNumber || !formData.lotNumber || !formData.unitNumber) {
+      newErrors.unit = 'Full unit details required.';
       isValid = false;
     }
-
-    if (!formData.lotNumber) {
-      newErrors.lotNumber = 'Required';
-      isValid = false;
-    }
-
-    if (!formData.unitNumber) {
-      newErrors.unitNumber = 'Required';
-      isValid = false;
-    }
-
     setErrors(newErrors);
     return isValid;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     const payload: VisitorData = {
       fullName: formData.fullName!,
@@ -101,9 +83,18 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
       blockNumber: formData.blockNumber!,
       lotNumber: formData.lotNumber!,
       unitNumber: formData.unitNumber!,
+      purpose: formData.purpose || PURPOSES[0],
       timestamp: Date.now()
     };
     setGeneratedQR(JSON.stringify(payload));
+  };
+
+  const handleShare = () => {
+    if (!generatedQR) return;
+    const data = JSON.parse(generatedQR);
+    const text = `Belimbing Visitor Pass\nName: ${data.fullName}\nUnit: ${data.blockNumber}-${data.lotNumber}-${data.unitNumber}\nPurpose: ${data.purpose}\nValid: 24 Hours`;
+    navigator.clipboard.writeText(text);
+    alert("Invitation text copied to clipboard! You can now send it to your visitor.");
   };
 
   if (generatedQR) {
@@ -112,8 +103,8 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
         <div className="w-full max-w-md bg-slate-800 rounded-2xl shadow-xl overflow-hidden border border-slate-700">
           <div className="bg-emerald-600 p-6 text-white text-center">
             <CheckCircle className="w-12 h-12 mx-auto mb-2" />
-            <h2 className="text-2xl font-bold">Access Pass Generated</h2>
-            <p className="opacity-90 text-sm mt-1">Valid for 24 Hours</p>
+            <h2 className="text-2xl font-bold">Pre-Registration Complete</h2>
+            <p className="opacity-90 text-sm mt-1">Ready for Quick Check-in</p>
           </div>
           
           <div className="p-8 flex flex-col items-center">
@@ -122,22 +113,22 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
             </div>
             
             <p className="mt-6 text-slate-400 text-center text-sm px-4">
-              Please present this QR code to the security guard at the main entrance.
+              Your registration is stored. Present this QR at the guardhouse for instant entry.
             </p>
 
             <div className="mt-8 w-full space-y-3">
                <button 
-                onClick={() => window.print()}
-                className="w-full flex items-center justify-center gap-2 bg-slate-100 text-slate-900 py-3 rounded-xl font-semibold hover:bg-white transition-colors"
+                onClick={handleShare}
+                className="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-500 transition-colors"
               >
-                <Download size={18} />
-                Save / Print
+                <Share2 size={18} />
+                Share Invitation
               </button>
               <button 
                 onClick={() => setGeneratedQR(null)}
                 className="w-full py-3 text-slate-400 hover:text-white font-medium"
               >
-                Generate New Pass
+                New Pre-Registration
               </button>
             </div>
           </div>
@@ -149,150 +140,63 @@ const VisitorForm: React.FC<VisitorFormProps> = ({ onBack }) => {
   return (
     <div className="min-h-screen bg-slate-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md mx-auto">
-        <button 
-          onClick={onBack} 
-          className="flex items-center text-slate-400 hover:text-white mb-6 transition-colors"
-        >
-          <ArrowLeft className="mr-2" size={20} />
-          Back to Home
+        <button onClick={onBack} className="flex items-center text-slate-400 hover:text-white mb-6 transition-colors">
+          <ArrowLeft className="mr-2" size={20} /> Back to Home
         </button>
 
         <div className="bg-slate-800 rounded-2xl shadow-lg p-8 border border-slate-700">
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-white">Visitor Registration</h1>
-            <p className="text-slate-400 mt-2">Please fill in your details to generate an entry pass.</p>
+            <h1 className="text-2xl font-bold text-white">Pre-Register Visitor</h1>
+            <p className="text-slate-400 mt-2">Generate a quick check-in pass for yourself or a guest.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Full Name (as per IC/Passport)</label>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Full Name</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className={`text-slate-500 ${errors.fullName ? 'text-red-500' : ''}`} size={18} />
+                  <User className="text-slate-500" size={18} />
                 </div>
-                <input
-                  name="fullName"
-                  type="text"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  className={`block w-full pl-10 pr-3 py-3 bg-slate-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all ${errors.fullName ? 'border-red-500' : 'border-slate-700'}`}
-                  placeholder="Ali Bin Abu"
-                />
+                <input name="fullName" type="text" value={formData.fullName} onChange={handleChange} className="block w-full pl-10 pr-3 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white" placeholder="Name" />
               </div>
-              {errors.fullName && <p className="mt-1 text-xs text-red-400 flex items-center gap-1"><AlertCircle size={12}/> {errors.fullName}</p>}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">IC/Passport</label>
+                <input name="icNumber" type="text" value={formData.icNumber} onChange={handleChange} className="block w-full px-3 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono" placeholder="IC No." />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Vehicle No.</label>
+                <input name="carPlate" type="text" value={formData.carPlate} onChange={handleChange} className="block w-full px-3 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono" placeholder="ABC 1234" />
+              </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">IC / Passport Number</label>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Purpose of Visit</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <CreditCard className={`text-slate-500 ${errors.icNumber ? 'text-red-500' : ''}`} size={18} />
+                  <ClipboardList className="text-slate-500" size={18} />
                 </div>
-                <input
-                  name="icNumber"
-                  type="text"
-                  value={formData.icNumber}
-                  onChange={handleChange}
-                  maxLength={15}
-                  className={`block w-full pl-10 pr-3 py-3 bg-slate-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all ${errors.icNumber ? 'border-red-500' : 'border-slate-700'}`}
-                  placeholder="e.g. 901020105555 or A1234567"
-                />
-              </div>
-              {errors.icNumber && <p className="mt-1 text-xs text-red-400 flex items-center gap-1"><AlertCircle size={12}/> {errors.icNumber}</p>}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Vehicle No.</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Car className="text-slate-500" size={18} />
-                </div>
-                <input
-                  name="carPlate"
-                  type="text"
-                  value={formData.carPlate}
-                  onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all"
-                  placeholder="ABC 1234"
-                />
+                <select name="purpose" value={formData.purpose} onChange={handleChange} className="block w-full pl-10 pr-3 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white appearance-none outline-none focus:ring-2 focus:ring-emerald-500">
+                  {PURPOSES.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
               </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-1">Phone Number</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Phone className={`text-slate-500 ${errors.phoneNumber ? 'text-red-500' : ''}`} size={18} />
-                </div>
-                <input
-                  name="phoneNumber"
-                  type="tel"
-                  inputMode="numeric"
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
-                  className={`block w-full pl-10 pr-3 py-3 bg-slate-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all ${errors.phoneNumber ? 'border-red-500' : 'border-slate-700'}`}
-                  placeholder="0123456789"
-                />
-              </div>
-              {errors.phoneNumber && <p className="mt-1 text-xs text-red-400 flex items-center gap-1"><AlertCircle size={12}/> {errors.phoneNumber}</p>}
+              <input name="phoneNumber" type="tel" value={formData.phoneNumber} onChange={handleChange} className="block w-full px-3 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white" placeholder="0123456789" />
             </div>
 
             <div className="grid grid-cols-3 gap-3">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Block</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Building className={`text-slate-500 ${errors.blockNumber ? 'text-red-500' : ''}`} size={18} />
-                  </div>
-                  <input
-                    name="blockNumber"
-                    type="text"
-                    value={formData.blockNumber}
-                    onChange={handleChange}
-                    className={`block w-full pl-10 pr-3 py-3 bg-slate-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all ${errors.blockNumber ? 'border-red-500' : 'border-slate-700'}`}
-                    placeholder="A"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Lot No.</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <MapPin className={`text-slate-500 ${errors.lotNumber ? 'text-red-500' : ''}`} size={18} />
-                  </div>
-                  <input
-                    name="lotNumber"
-                    type="text"
-                    value={formData.lotNumber}
-                    onChange={handleChange}
-                    className={`block w-full pl-10 pr-3 py-3 bg-slate-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all ${errors.lotNumber ? 'border-red-500' : 'border-slate-700'}`}
-                    placeholder="10"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Unit No.</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Home className={`text-slate-500 ${errors.unitNumber ? 'text-red-500' : ''}`} size={18} />
-                  </div>
-                  <input
-                    name="unitNumber"
-                    type="text"
-                    value={formData.unitNumber}
-                    onChange={handleChange}
-                    className={`block w-full pl-10 pr-3 py-3 bg-slate-900 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-600 outline-none transition-all ${errors.unitNumber ? 'border-red-500' : 'border-slate-700'}`}
-                    placeholder="05"
-                  />
-                </div>
-              </div>
+              <input name="blockNumber" type="text" value={formData.blockNumber} onChange={handleChange} className="block w-full px-3 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white" placeholder="Block" />
+              <input name="lotNumber" type="text" value={formData.lotNumber} onChange={handleChange} className="block w-full px-3 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white" placeholder="Lot" />
+              <input name="unitNumber" type="text" value={formData.unitNumber} onChange={handleChange} className="block w-full px-3 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white" placeholder="Unit" />
             </div>
 
-            <button
-              type="submit"
-              className="w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-500/20 transition-all shadow-lg shadow-emerald-600/20 mt-4"
-            >
-              Generate Pass
+            <button type="submit" className="w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-emerald-700 shadow-lg mt-4">
+              Generate Quick Pass
             </button>
           </form>
         </div>

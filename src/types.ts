@@ -7,6 +7,7 @@ export interface VisitorData {
   blockNumber: string;
   lotNumber: string;
   unitNumber: string;
+  purpose: string;
   timestamp: number; // Unix timestamp for creation
 }
 
@@ -16,8 +17,9 @@ export interface SecurityLog {
   icNumber: string;
   carPlate?: string;
   destination: string;
+  purpose: string;
   checkInTime: string;
-  status: 'GRANTED' | 'DENIED' | 'EXPIRED';
+  status: 'GRANTED' | 'DENIED' | 'EXPIRED' | 'BLACKLISTED';
   aiAnalysis: string;
 }
 
