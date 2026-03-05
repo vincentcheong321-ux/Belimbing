@@ -119,3 +119,47 @@ export const clearLogs = async (): Promise<void> => {
     clearLogsLocal();
   }
 };
+
+export const uploadAPK = async (file: File): Promise<string | null> => {
+  if (!supabase) return null;
+  try {
+    const fileName = `belimbing-${Date.now()}.apk`;
+    const { data, error } = await supabase.storage
+      .from('apks')
+      .upload(fileName, file);
+
+    if (error) throw error;
+    
+    const { data: { publicUrl } } = supabase.storage
+      .from('apks')
+      .getPublicUrl(fileName);
+      
+    return publicUrl;
+  } catch (e) {
+    console.error("Failed to upload APK", e);
+    return null;
+  }
+};
+
+export const getLatestAPK = async (): Promise<string | null> => {
+  if (!supabase) return null;
+  try {
+    const { data, error } = await supabase.storage
+      .from('apks')
+      .list('', {
+        limit: 1,
+        offset: 0,
+        sortBy: { column: 'created_at', order: 'desc' }
+      });
+
+    if (error || !data || data.length === 0) return null;
+    
+    const { data: { publicUrl } } = supabase.storage
+      .from('apks')
+      .getPublicUrl(data[0].name);
+      
+    return publicUrl;
+  } catch (e) {
+    return null;
+  }
+};

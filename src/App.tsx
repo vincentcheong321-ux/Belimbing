@@ -1,15 +1,24 @@
 
 import React, { useState, useEffect } from 'react';
-import { Shield, UserPlus, Presentation, BellRing } from 'lucide-react';
+import { Shield, UserPlus, Presentation, BellRing, Download, Upload, Loader2 } from 'lucide-react';
 import VisitorForm from './components/VisitorForm';
 import GuardDashboard from './components/GuardDashboard';
 import ProposalDeck from './components/ProposalDeck';
 import { AppMode } from './types';
+import { getLatestAPK, uploadAPK } from './services/storage';
 
 export default function App() {
   const [mode, setMode] = useState<AppMode>(AppMode.HOME);
+  const [apkUrl, setApkUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
+    const fetchApk = async () => {
+      const url = await getLatestAPK();
+      setApkUrl(url);
+    };
+    fetchApk();
+
     const handleLocationChange = () => {
       const path = window.location.pathname;
       if (path === '/guard' || path === '/guard/') setMode(AppMode.GUARD);
@@ -31,6 +40,21 @@ export default function App() {
     setMode(newMode);
   };
 
+  const handleApkUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setIsUploading(true);
+    const url = await uploadAPK(file);
+    if (url) {
+      setApkUrl(url);
+      alert('APK uploaded successfully!');
+    } else {
+      alert('Failed to upload APK. Please ensure the "apks" bucket exists in Supabase Storage.');
+    }
+    setIsUploading(false);
+  };
+
   const renderContent = () => {
     switch (mode) {
       case AppMode.VISITOR: return <VisitorForm onBack={() => navigateTo(AppMode.HOME)} />;
@@ -49,22 +73,64 @@ export default function App() {
               <p className="text-slate-400">Secure. Smart. Seamless.</p>
             </div>
 
-            <div className="flex justify-center mb-16">
+            <div className="flex flex-col md:flex-row justify-center gap-6 mb-16">
               <button 
                 onClick={() => navigateTo(AppMode.VISITOR)}
-                className="group relative overflow-hidden bg-white p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:-translate-y-1 w-full max-w-lg text-left"
+                className="group relative overflow-hidden bg-white p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:-translate-y-1 w-full max-w-sm text-left"
               >
                 <div className="relative z-10 flex flex-col items-center text-center">
                   <div className="bg-emerald-100 p-4 rounded-full text-emerald-600 mb-6">
                     <UserPlus size={40} />
                   </div>
                   <h2 className="text-3xl font-bold text-slate-900 mb-3">Pre-Register</h2>
-                  <p className="text-slate-500 text-lg mb-8">Register yourself or guests for instant check-in. Purpose selection & resident alerts included.</p>
+                  <p className="text-slate-500 text-lg mb-8">Register yourself or guests for instant check-in.</p>
                   <div className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold text-sm uppercase tracking-wide group-hover:bg-emerald-600 transition-colors shadow-lg flex items-center justify-center gap-2">
                     <BellRing size={16} /> Start Registration
                   </div>
                 </div>
               </button>
+
+              <div className="group relative overflow-hidden bg-slate-800/50 border border-slate-700 p-8 rounded-2xl shadow-2xl transition-all duration-300 w-full max-w-sm text-left">
+                <div className="relative z-10 flex flex-col items-center text-center">
+                  <div className="bg-indigo-500/10 p-4 rounded-full text-indigo-400 mb-6 border border-indigo-500/20">
+                    <Download size={40} />
+                  </div>
+                  <h2 className="text-3xl font-bold text-white mb-3">Mobile App</h2>
+                  <p className="text-slate-400 text-lg mb-8">Download the Belimbing Android app for guards and residents.</p>
+                  
+                  {apkUrl ? (
+                    <a 
+                      href={apkUrl}
+                      download
+                      className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold text-sm uppercase tracking-wide hover:bg-indigo-500 transition-colors shadow-lg flex items-center justify-center gap-2"
+                    >
+                      <Download size={16} /> Download APK
+                    </a>
+                  ) : (
+                    <div className="w-full py-4 bg-slate-700 text-slate-400 rounded-xl font-bold text-sm uppercase tracking-wide flex items-center justify-center gap-2">
+                      No APK Available
+                    </div>
+                  )}
+
+                  <div className="mt-6 w-full">
+                    <label className="cursor-pointer inline-flex items-center gap-2 text-xs text-slate-500 hover:text-slate-300 transition-colors">
+                      {isUploading ? (
+                        <Loader2 className="animate-spin" size={14} />
+                      ) : (
+                        <Upload size={14} />
+                      )}
+                      <span>{isUploading ? 'Uploading...' : 'Update APK (Admin)'}</span>
+                      <input 
+                        type="file" 
+                        accept=".apk" 
+                        className="hidden" 
+                        onChange={handleApkUpload}
+                        disabled={isUploading}
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
             </div>
             
             <div className="text-center">
