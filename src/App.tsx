@@ -45,12 +45,12 @@ export default function App() {
     if (!file) return;
     
     setIsUploading(true);
-    const url = await uploadAPK(file);
+    const { url, error } = await uploadAPK(file);
     if (url) {
       setApkUrl(url);
       alert('APK uploaded successfully!');
     } else {
-      alert('Failed to upload APK. Please ensure the "apks" bucket exists in Supabase Storage.');
+      alert(`Upload failed: ${error}\n\nCommon fixes:\n1. Ensure bucket "apks" exists.\n2. Ensure bucket is set to "Public".\n3. Ensure "Insert" policy is added for public.`);
     }
     setIsUploading(false);
   };

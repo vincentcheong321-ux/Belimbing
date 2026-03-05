@@ -120,24 +120,27 @@ export const clearLogs = async (): Promise<void> => {
   }
 };
 
-export const uploadAPK = async (file: File): Promise<string | null> => {
-  if (!supabase) return null;
+export const uploadAPK = async (file: File): Promise<{ url: string | null; error: string | null }> => {
+  if (!supabase) return { url: null, error: 'Supabase client not initialized' };
   try {
     const fileName = `belimbing-${Date.now()}.apk`;
     const { data, error } = await supabase.storage
       .from('apks')
       .upload(fileName, file);
 
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase Storage Error:", error);
+      return { url: null, error: error.message };
+    }
     
     const { data: { publicUrl } } = supabase.storage
       .from('apks')
       .getPublicUrl(fileName);
       
-    return publicUrl;
-  } catch (e) {
+    return { url: publicUrl, error: null };
+  } catch (e: any) {
     console.error("Failed to upload APK", e);
-    return null;
+    return { url: null, error: e.message || 'Unknown error occurred' };
   }
 };
 
