@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Scan, ShieldCheck, ShieldAlert, Clock, ArrowLeft, Loader2, CheckSquare, FileText, UserMinus, BellRing } from 'lucide-react';
+import { Scan, ShieldCheck, ShieldAlert, Clock, ArrowLeft, Loader2, CheckSquare, FileText, UserMinus, BellRing, Lock } from 'lucide-react';
 import QRScanner from './QRScanner';
 import VisitorLogs from './VisitorLogs';
 import { VisitorData, SecurityLog } from '../types';
@@ -8,11 +8,12 @@ import { saveLog, getLogs, getBlacklist, addToBlacklist } from '../services/stor
 
 interface GuardDashboardProps {
   onBack: () => void;
+  onAdmin?: () => void;
 }
 
 type DashboardView = 'HOME' | 'SCANNER' | 'LOGS';
 
-const GuardDashboard: React.FC<GuardDashboardProps> = ({ onBack }) => {
+const GuardDashboard: React.FC<GuardDashboardProps> = ({ onBack, onAdmin }) => {
   const [view, setView] = useState<DashboardView>('HOME');
   const [scannedData, setScannedData] = useState<VisitorData | null>(null);
   const [status, setStatus] = useState<'IDLE' | 'VALID' | 'EXPIRED' | 'INVALID' | 'BLACKLISTED'>('IDLE');
@@ -100,14 +101,16 @@ const GuardDashboard: React.FC<GuardDashboardProps> = ({ onBack }) => {
     setView('SCANNER');
   };
 
-  if (view === 'LOGS') return <VisitorLogs onBack={() => setView('HOME')} />;
-
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 p-4 sm:p-6">
-      {view === 'SCANNER' && <QRScanner onScan={handleScan} onClose={() => setView('HOME')} />}
+    <div className="min-h-screen bg-slate-900 text-slate-100 pb-24">
+      {view === 'LOGS' ? (
+        <VisitorLogs onBack={() => setView('HOME')} />
+      ) : (
+        <div className="p-4 sm:p-6">
+          {view === 'SCANNER' && <QRScanner onScan={handleScan} onClose={() => setView('HOME')} />}
 
-      <div className="max-w-2xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+          <div className="max-w-2xl mx-auto">
+            <div className="flex items-center justify-between mb-8">
           <button onClick={onBack} className="flex items-center text-slate-400 hover:text-white transition-colors">
             <ArrowLeft className="mr-2" /> Back
           </button>
@@ -204,6 +207,45 @@ const GuardDashboard: React.FC<GuardDashboardProps> = ({ onBack }) => {
               </div>
             )}
           </div>
+        )}
+      </div>
+    </div>
+  )}
+
+      {/* Mobile App Tab Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 px-6 py-3 flex justify-around items-center z-50 pb-safe">
+        <button 
+          onClick={onBack} 
+          className="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-colors"
+        >
+          <ArrowLeft size={24} />
+          <span className="text-[10px] font-medium">Exit</span>
+        </button>
+        
+        <button 
+          onClick={() => setView('HOME')} 
+          className={`flex flex-col items-center gap-1 transition-colors ${view === 'HOME' ? 'text-emerald-400' : 'text-slate-400 hover:text-slate-200'}`}
+        >
+          <ShieldCheck size={24} />
+          <span className="text-[10px] font-medium">Dashboard</span>
+        </button>
+
+        <button 
+          onClick={() => setView('LOGS')} 
+          className={`flex flex-col items-center gap-1 transition-colors ${view === 'LOGS' ? 'text-emerald-400' : 'text-slate-400 hover:text-slate-200'}`}
+        >
+          <FileText size={24} />
+          <span className="text-[10px] font-medium">Logs</span>
+        </button>
+
+        {onAdmin && (
+          <button 
+            onClick={onAdmin} 
+            className="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-colors"
+          >
+            <Lock size={24} />
+            <span className="text-[10px] font-medium">Admin</span>
+          </button>
         )}
       </div>
     </div>

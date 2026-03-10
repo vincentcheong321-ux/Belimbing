@@ -4,8 +4,10 @@ import { Shield, UserPlus, Presentation, BellRing, Download, Upload, Loader2 } f
 import VisitorForm from './components/VisitorForm';
 import GuardDashboard from './components/GuardDashboard';
 import ProposalDeck from './components/ProposalDeck';
+import { VinAppDownload } from './components/VinAppDownload';
 import { AppMode } from './types';
-import { getLatestAPK, uploadAPK } from './services/storage';
+import { getLatestAPK, uploadAPK, setManualAPKUrl } from './services/storage';
+import { Link } from 'lucide-react';
 
 export default function App() {
   const [mode, setMode] = useState<AppMode>(AppMode.HOME);
@@ -21,6 +23,10 @@ export default function App() {
 
     const handleLocationChange = () => {
       const path = window.location.pathname;
+      if (path === '/download/ktv') {
+        setMode(AppMode.KTV_DOWNLOAD);
+        return;
+      }
       if (path === '/guard' || path === '/guard/') setMode(AppMode.GUARD);
       else if (path === '/visitor' || path === '/visitor/') setMode(AppMode.VISITOR);
       else if (path === '/presentation') setMode(AppMode.PRESENTATION);
@@ -55,8 +61,33 @@ export default function App() {
     setIsUploading(false);
   };
 
+  const handleManualUrl = async () => {
+    const url = prompt('Enter the direct download URL for the APK (e.g., Google Drive link):', apkUrl || '');
+    if (url === null) return; // Cancelled
+    
+    const success = await setManualAPKUrl(url);
+    if (success) {
+      setApkUrl(url || null);
+      alert('Download URL updated!');
+    } else {
+      alert('Failed to update URL. Please ensure the "app_settings" table exists.');
+    }
+  };
+
+  const handleKtvDownload = () => {
+    // Navigate to the remapped URL instead of the direct GitHub link
+    window.location.href = '/download/ktv';
+  };
+
+  const copyRemappedLink = () => {
+    const remappedUrl = `${window.location.origin}/download/ktv`;
+    navigator.clipboard.writeText(remappedUrl);
+    alert(`Copied remapped link to clipboard:\n${remappedUrl}`);
+  };
+
   const renderContent = () => {
     switch (mode) {
+      case AppMode.KTV_DOWNLOAD: return <VinAppDownload />;
       case AppMode.VISITOR: return <VisitorForm onBack={() => navigateTo(AppMode.HOME)} />;
       case AppMode.GUARD: return <GuardDashboard onBack={() => navigateTo(AppMode.HOME)} />;
       case AppMode.PRESENTATION: return <ProposalDeck onClose={() => navigateTo(AppMode.HOME)} />;
@@ -98,28 +129,39 @@ export default function App() {
                   <h2 className="text-3xl font-bold text-white mb-3">Mobile App</h2>
                   <p className="text-slate-400 text-lg mb-8">Download the Belimbing Android app for guards and residents.</p>
                   
-                  {apkUrl ? (
+                  <div className="w-full flex flex-col gap-2 mb-4">
+                    <button 
+                      onClick={handleKtvDownload}
+                      className="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold text-sm uppercase tracking-wide hover:bg-emerald-500 transition-colors shadow-lg flex items-center justify-center gap-2"
+                    >
+                      <Download size={16} /> Download 金调KTV APK
+                    </button>
+                    <button 
+                      onClick={copyRemappedLink}
+                      className="w-full py-2 bg-slate-700/50 text-slate-300 rounded-xl font-medium text-xs uppercase tracking-wide hover:bg-slate-700 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <Link size={14} /> Copy Shareable Link
+                    </button>
+                  </div>
+
+                  {apkUrl && (
                     <a 
                       href={apkUrl}
                       download
                       className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold text-sm uppercase tracking-wide hover:bg-indigo-500 transition-colors shadow-lg flex items-center justify-center gap-2"
                     >
-                      <Download size={16} /> Download APK
+                      <Download size={16} /> Download Belimbing APK
                     </a>
-                  ) : (
-                    <div className="w-full py-4 bg-slate-700 text-slate-400 rounded-xl font-bold text-sm uppercase tracking-wide flex items-center justify-center gap-2">
-                      No APK Available
-                    </div>
                   )}
 
-                  <div className="mt-6 w-full">
+                  <div className="mt-6 w-full flex flex-col gap-3">
                     <label className="cursor-pointer inline-flex items-center gap-2 text-xs text-slate-500 hover:text-slate-300 transition-colors">
                       {isUploading ? (
                         <Loader2 className="animate-spin" size={14} />
                       ) : (
                         <Upload size={14} />
                       )}
-                      <span>{isUploading ? 'Uploading...' : 'Update APK (Admin)'}</span>
+                      <span>{isUploading ? 'Uploading...' : 'Upload APK (Max 50MB)'}</span>
                       <input 
                         type="file" 
                         accept=".apk" 
@@ -128,6 +170,14 @@ export default function App() {
                         disabled={isUploading}
                       />
                     </label>
+
+                    <button 
+                      onClick={handleManualUrl}
+                      className="inline-flex items-center gap-2 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+                    >
+                      <Link size={14} />
+                      <span>Set External Link (For &gt;50MB)</span>
+                    </button>
                   </div>
                 </div>
               </div>

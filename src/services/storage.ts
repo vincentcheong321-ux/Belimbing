@@ -144,9 +144,35 @@ export const uploadAPK = async (file: File): Promise<{ url: string | null; error
   }
 };
 
-export const getLatestAPK = async (): Promise<string | null> => {
-  if (!supabase) return null;
+export const setManualAPKUrl = async (url: string): Promise<boolean> => {
+  if (!supabase) {
+    localStorage.setItem('manual_apk_url', url);
+    return true;
+  }
   try {
+    const { error } = await supabase
+      .from('app_settings')
+      .upsert({ id: 'latest_apk_url', value: url });
+    return !error;
+  } catch (e) {
+    localStorage.setItem('manual_apk_url', url);
+    return true;
+  }
+};
+
+export const getLatestAPK = async (): Promise<string | null> => {
+  if (!supabase) return localStorage.getItem('manual_apk_url');
+  try {
+    // First check for a manual URL in settings
+    const { data: settingsData } = await supabase
+      .from('app_settings')
+      .select('value')
+      .eq('id', 'latest_apk_url')
+      .single();
+
+    if (settingsData?.value) return settingsData.value;
+
+    // Fallback to storage bucket
     const { data, error } = await supabase.storage
       .from('apks')
       .list('', {
@@ -163,6 +189,6 @@ export const getLatestAPK = async (): Promise<string | null> => {
       
     return publicUrl;
   } catch (e) {
-    return null;
+    return localStorage.getItem('manual_apk_url');
   }
 };
