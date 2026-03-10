@@ -5,6 +5,7 @@ import VisitorForm from './components/VisitorForm';
 import GuardDashboard from './components/GuardDashboard';
 import ProposalDeck from './components/ProposalDeck';
 import { VinAppDownload } from './components/VinAppDownload';
+import AdminShare from './components/AdminShare';
 import { AppMode } from './types';
 import { getLatestAPK, uploadAPK, setManualAPKUrl } from './services/storage';
 import { Link } from 'lucide-react';
@@ -30,6 +31,7 @@ export default function App() {
       if (path === '/guard' || path === '/guard/') setMode(AppMode.GUARD);
       else if (path === '/visitor' || path === '/visitor/') setMode(AppMode.VISITOR);
       else if (path === '/presentation') setMode(AppMode.PRESENTATION);
+      else if (path === '/admin' || path === '/admin/') setMode(AppMode.ADMIN);
       else setMode(AppMode.HOME);
     };
     handleLocationChange();
@@ -42,6 +44,7 @@ export default function App() {
     if (newMode === AppMode.GUARD) path = '/guard';
     else if (newMode === AppMode.VISITOR) path = '/visitor';
     else if (newMode === AppMode.PRESENTATION) path = '/presentation';
+    else if (newMode === AppMode.ADMIN) path = '/admin';
     window.history.pushState({}, '', path);
     setMode(newMode);
   };
@@ -89,7 +92,8 @@ export default function App() {
     switch (mode) {
       case AppMode.KTV_DOWNLOAD: return <VinAppDownload />;
       case AppMode.VISITOR: return <VisitorForm onBack={() => navigateTo(AppMode.HOME)} />;
-      case AppMode.GUARD: return <GuardDashboard onBack={() => navigateTo(AppMode.HOME)} />;
+      case AppMode.GUARD: return <GuardDashboard onBack={() => navigateTo(AppMode.HOME)} onAdmin={() => navigateTo(AppMode.ADMIN)} />;
+      case AppMode.ADMIN: return <AdminShare onBack={() => navigateTo(AppMode.GUARD)} />;
       case AppMode.PRESENTATION: return <ProposalDeck onClose={() => navigateTo(AppMode.HOME)} />;
       default: return (
         <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4">
