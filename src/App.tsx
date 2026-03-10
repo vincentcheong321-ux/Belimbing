@@ -78,14 +78,13 @@ export default function App() {
   };
 
   const handleKtvDownload = () => {
-    // Navigate to the remapped URL instead of the direct GitHub link
-    window.location.href = '/download/ktv';
-  };
-
-  const copyRemappedLink = () => {
-    const remappedUrl = `${window.location.origin}/download/ktv`;
-    navigator.clipboard.writeText(remappedUrl);
-    alert(`Copied remapped link to clipboard:\n${remappedUrl}`);
+    const expiresAt = Date.now() + 1 * 60 * 60 * 1000; // 1 hour for direct clicks
+    const payload = btoa(JSON.stringify({
+      expires: expiresAt,
+      role: 'download',
+      salt: Math.random().toString(36).substring(2, 15)
+    }));
+    window.location.href = `/download/ktv?token=${payload}`;
   };
 
   const renderContent = () => {
@@ -139,12 +138,6 @@ export default function App() {
                       className="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold text-sm uppercase tracking-wide hover:bg-emerald-500 transition-colors shadow-lg flex items-center justify-center gap-2"
                     >
                       <Download size={16} /> Download 金调KTV APK
-                    </button>
-                    <button 
-                      onClick={copyRemappedLink}
-                      className="w-full py-2 bg-slate-700/50 text-slate-300 rounded-xl font-medium text-xs uppercase tracking-wide hover:bg-slate-700 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <Link size={14} /> Copy Shareable Link
                     </button>
                   </div>
 

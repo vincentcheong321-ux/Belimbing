@@ -16,13 +16,14 @@ export default function AdminShare({ onBack }: AdminShareProps) {
     // Create a simple payload. In a real app, this would be signed by a backend.
     const payload = btoa(JSON.stringify({
       expires: expiresAt,
-      role: 'visitor',
+      role: 'download',
       // Add a random salt so links look different
       salt: Math.random().toString(36).substring(2, 15)
     }));
 
     // Generate the full URL
     const url = new URL(window.location.origin);
+    url.pathname = '/download/ktv';
     url.searchParams.set('token', payload);
     
     setGeneratedLink(url.toString());
@@ -57,7 +58,7 @@ export default function AdminShare({ onBack }: AdminShareProps) {
               <Link size={32} />
             </div>
             <h2 className="text-2xl font-bold">Generate Invite Link</h2>
-            <p className="text-indigo-100 mt-2">Create a temporary access link for visitors</p>
+            <p className="text-indigo-100 mt-2">Create a temporary download link for the APK</p>
           </div>
 
           <div className="p-6 space-y-6">
@@ -121,7 +122,7 @@ export default function AdminShare({ onBack }: AdminShareProps) {
                 <p className="text-xs text-slate-500 mt-3 flex items-start gap-1.5">
                   <ShieldAlert size={14} className="text-amber-500 flex-shrink-0 mt-0.5" />
                   <span>
-                    Anyone with this link can access the Visitor Check-in page until it expires in {expiryHours} hour{expiryHours > 1 ? 's' : ''}.
+                    Anyone with this link can download the APK until it expires in {expiryHours} hour{expiryHours > 1 ? 's' : ''}.
                   </span>
                 </p>
               </div>
